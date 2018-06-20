@@ -3,16 +3,31 @@ package chessgame
 
 // Gets all straight line moves, given a pieces coordinates, its side, and a board. Used for rooks and queens
 func getAllStraightLineMoves(coord Coordinate, board Board, side Side) []Coordinate {
-	var potentialMoves []Coordinate
+	var allPotentialMoves []Coordinate
 	potentialUpMoves := getStraightLineMoves(coord, board, side, true, true)
-	potentialMoves = append(potentialMoves, potentialUpMoves...)
 	potentialDownMoves := getStraightLineMoves(coord, board, side, true, false)
-	potentialMoves = append(potentialMoves, potentialDownMoves...)
 	potentialRightMoves := getStraightLineMoves(coord, board, side, false, true)
-	potentialMoves = append(potentialMoves, potentialRightMoves...)
 	potentialLeftMoves := getStraightLineMoves(coord, board, side, false, false)
+
+	potentialMoves = append(potentialMoves, potentialUpMoves...)
+	potentialMoves = append(potentialMoves, potentialDownMoves...)
+	potentialMoves = append(potentialMoves, potentialRightMoves...)	
 	potentialMoves = append(potentialMoves, potentialLeftMoves...)
-	return potentialMoves
+	return allPotentialMoves
+}
+
+funct getAllDiagonalMoves(coord Coordinate, board Board, side Side) []Coordinate {
+	var allPotentialMoves []Coordinate
+	potentialLeftAndUpMoves := getDiagonalMoves(coord,board,side,true,false)
+	potentialRightAndUpMoves := getDiagonalMoves(coord,board,side,true,true)
+	potentialLeftAndDownMoves := getDiagonalMoves(coord,board,side,false,false)
+	potentialRightAndDownMoves := getDiagonalMoves(coord,board,side,true,false)
+	
+	allPotentialMoves = append(allPotentialMoves, potentialLeftAndUpMoves...)
+	allPotentialMoves = append(allPotentialMoves, potentialRightAndUpMoves...)
+	allPotentialMoves = append(allPotentialMoves, potentialLeftAndDownMoves...)
+	allPotentialMoves = append(allPotentialMoves, potentialRightAndDownMoves...)
+	return allPotentialMoves
 }
 
 // Gets straight line moves in single direction for a given coordinate, board, and side. moveVertical specifies whether piece should
@@ -26,7 +41,7 @@ func getStraightLineMoves(coord Coordinate, board Board, side Side, moveVertical
 		currentChangeVal = -1
 	}
 	for {
-		newCoord := getNextCoordinate(coord, currentChangeVal, moveVertical)
+		newCoord := getNextStraightLineCoordinate(coord, currentChangeVal, moveVertical)
 		toAdd, toBreak := canMoveToSquare(newCoord, board, side)
 		if toAdd {
 			potentialMoves = append(potentialMoves, newCoord)
@@ -43,6 +58,40 @@ func getStraightLineMoves(coord Coordinate, board Board, side Side, moveVertical
 	return potentialMoves
 }
 
+func getDiagonalMoves(coord Coordinate, board Board, side Side, moveUp bool, moveRight bool) []Coordinate {
+	var potentialCoordinates []Coordinate
+	columnChange := 1
+	if moveRight {
+		columnChange = -1
+	}
+	rowChange := 1
+	if moveUp {
+		rowChange = -1
+	}
+	for {
+		newCoord := getNextDiagonalCoordinate(coord, rowChange, columnChange)
+		toAdd, toBreak := canMoveToSquare(newCoord, board, side)
+		if toAdd {
+			potentialMoves = append(potentialMoves, newCoord)
+		}
+		if toBreak {
+			break
+		}
+
+		if moveUp {
+			rowChange--
+		} else {
+			rowChange++
+		}
+		if moveRight {
+			columnChange++
+		} else {
+			columnChange--
+		}
+	}
+	return potentialCoordinates
+}
+
 // Returns whether to add coordinate to potential moves list, and whether loop encompassing this method should break (if path stops)
 func canMoveToSquare(coord Coordinate, board Board, side Side) (bool, bool) {
 	if !coord.isLegal() {
@@ -56,13 +105,19 @@ func canMoveToSquare(coord Coordinate, board Board, side Side) (bool, bool) {
 	}
 }
 
-func getNextCoordinate(coord Coordinate, changeVal int, moveVertical bool) Coordinate {
+func getNextStraightLineCoordinate(coord Coordinate, changeVal int, moveVertical bool) Coordinate {
 	if moveVertical {
 		newRow := coord.Row + changeVal
 		return Coordinate{Row: coord.Row, Column: newRow}
 	}
 	newCol := coord.Column + changeVal
 	return Coordinate{Row: coord.Row, Column: newCol}
+}
+
+func getNextDiagonalCoordinate(coord Coordinate, verticalChange int, horizontalChange int) {
+	newRow := coord.Row + verticalChange
+	newCol := coord.Column + horizontalChange
+	return Coordinate{Row: newRow, Column: newCol}
 }
 
 func (coord Coordinate) isLegal() bool {

@@ -7,8 +7,9 @@ type Coordinate struct {
 }
 
 type ChessPiece interface {
-	validMoves(board Board) []Coordinate
-	updatePosition(coordinate Coordinate)
+	validMoves() []Coordinate
+	updatePosition(coord Coordinate)
+	updateValidMoves(board *Board)
 	getPieceSide(coord Coordinate) Side
 }
 
