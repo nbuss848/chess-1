@@ -20,7 +20,7 @@ func (bishop *Bishop) updateValidMoves(board Board) {
 	}
 }
 
-func (bishop *Bishop) getPieceSide() {
+func (bishop *Bishop) getPieceSide() Side {
 	return bishop.pieceSide
 }
 

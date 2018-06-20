@@ -20,7 +20,7 @@ func (rook *Rook) updateValidMoves(board Board) {
 	}
 }
 
-func (rook *Rook) getPieceSide() {
+func (rook *Rook) getPieceSide() Side {
 	return rook.pieceSide
 }
 

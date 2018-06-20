@@ -7,7 +7,7 @@ import (
 
 func TestGetNextCoordinate(t *testing.T) {
 	coord := Coordinate{Row: 3, Column: 3}
-	nextCoordinateRight := getNextCoordinate(coord, 1, false)
+	nextCoordinateRight := getNextStraightLineCoordinate(coord, 1, false)
 	expectedRow := 3
 	expectedCol := 4
 	if expectedCol != nextCoordinateRight.Column {

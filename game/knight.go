@@ -22,22 +22,27 @@ func (knight *Knight) updateValidMoves(board Board) {
 		newVertCoordRight := Coordinate{Row: newRow, Column: knight.currentCoordinate.Column + 1}
 		newHorizontalCoordUp := Coordinate{Row: knight.currentCoordinate.Row - 1, Column: newColumn}
 		newHorizontalCoordDown := Coordinate{Row: knight.currentCoordinate.Row + 1, Column: newColumn}
-		if canMoveToSquare(newVertCoordLeft, board, knight.pieceSide) {
+
+		canMoveLeft, _ := canMoveToSquare(newVertCoordLeft, board, knight.pieceSide)
+		if canMoveLeft {
 			knight.potentialMoves[newVertCoordLeft] = true
 		}
-		if canMoveToSquare(newVertCoordRight, board, knight.pieceSide) {
+		canMoveRight, _ := canMoveToSquare(newVertCoordRight, board, knight.pieceSide)
+		if canMoveRight {
 			knight.potentialMoves[newVertCoordRight] = true
 		}
-		if canMoveToSquare(newHorizontalCoordUp, board, knight.pieceSide) {
+		canMoveUp, _ := canMoveToSquare(newHorizontalCoordUp, board, knight.pieceSide)
+		if canMoveUp {
 			knight.potentialMoves[newHorizontalCoordUp] = true
 		}
-		if canMoveToSquare(newHorizontalCoordDown, board, knight.pieceSide) {
+		canMoveDown, _ := canMoveToSquare(newHorizontalCoordDown, board, knight.pieceSide)
+		if canMoveDown {
 			knight.potentialMoves[newHorizontalCoordDown] = true
 		}
 	}
 }
 
-func (knight *Knight) getPieceSide() {
+func (knight *Knight) getPieceSide() Side {
 	return knight.pieceSide
 }
 

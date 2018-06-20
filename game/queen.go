@@ -24,7 +24,7 @@ func (queen *Queen) updateValidMoves(board Board) {
 	}
 }
 
-func (queen *Queen) getPieceSide() {
+func (queen *Queen) getPieceSide() Side {
 	return queen.pieceSide
 }
 

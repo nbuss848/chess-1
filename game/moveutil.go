@@ -9,20 +9,20 @@ func getAllStraightLineMoves(coord Coordinate, board Board, side Side) []Coordin
 	potentialRightMoves := getStraightLineMoves(coord, board, side, false, true)
 	potentialLeftMoves := getStraightLineMoves(coord, board, side, false, false)
 
-	potentialMoves = append(potentialMoves, potentialUpMoves...)
-	potentialMoves = append(potentialMoves, potentialDownMoves...)
-	potentialMoves = append(potentialMoves, potentialRightMoves...)	
-	potentialMoves = append(potentialMoves, potentialLeftMoves...)
+	allPotentialMoves = append(allPotentialMoves, potentialUpMoves...)
+	allPotentialMoves = append(allPotentialMoves, potentialDownMoves...)
+	allPotentialMoves = append(allPotentialMoves, potentialRightMoves...)
+	allPotentialMoves = append(allPotentialMoves, potentialLeftMoves...)
 	return allPotentialMoves
 }
 
-funct getAllDiagonalMoves(coord Coordinate, board Board, side Side) []Coordinate {
+func getAllDiagonalMoves(coord Coordinate, board Board, side Side) []Coordinate {
 	var allPotentialMoves []Coordinate
-	potentialLeftAndUpMoves := getDiagonalMoves(coord,board,side,true,false)
-	potentialRightAndUpMoves := getDiagonalMoves(coord,board,side,true,true)
-	potentialLeftAndDownMoves := getDiagonalMoves(coord,board,side,false,false)
-	potentialRightAndDownMoves := getDiagonalMoves(coord,board,side,true,false)
-	
+	potentialLeftAndUpMoves := getDiagonalMoves(coord, board, side, true, false)
+	potentialRightAndUpMoves := getDiagonalMoves(coord, board, side, true, true)
+	potentialLeftAndDownMoves := getDiagonalMoves(coord, board, side, false, false)
+	potentialRightAndDownMoves := getDiagonalMoves(coord, board, side, true, false)
+
 	allPotentialMoves = append(allPotentialMoves, potentialLeftAndUpMoves...)
 	allPotentialMoves = append(allPotentialMoves, potentialRightAndUpMoves...)
 	allPotentialMoves = append(allPotentialMoves, potentialLeftAndDownMoves...)
@@ -59,7 +59,7 @@ func getStraightLineMoves(coord Coordinate, board Board, side Side, moveVertical
 }
 
 func getDiagonalMoves(coord Coordinate, board Board, side Side, moveUp bool, moveRight bool) []Coordinate {
-	var potentialCoordinates []Coordinate
+	var potentialMoves []Coordinate
 	columnChange := 1
 	if moveRight {
 		columnChange = -1
@@ -89,7 +89,7 @@ func getDiagonalMoves(coord Coordinate, board Board, side Side, moveUp bool, mov
 			columnChange--
 		}
 	}
-	return potentialCoordinates
+	return potentialMoves
 }
 
 // Returns whether to add coordinate to potential moves list, and whether loop encompassing this method should break (if path stops)
@@ -114,7 +114,7 @@ func getNextStraightLineCoordinate(coord Coordinate, changeVal int, moveVertical
 	return Coordinate{Row: coord.Row, Column: newCol}
 }
 
-func getNextDiagonalCoordinate(coord Coordinate, verticalChange int, horizontalChange int) {
+func getNextDiagonalCoordinate(coord Coordinate, verticalChange int, horizontalChange int) Coordinate {
 	newRow := coord.Row + verticalChange
 	newCol := coord.Column + horizontalChange
 	return Coordinate{Row: newRow, Column: newCol}
