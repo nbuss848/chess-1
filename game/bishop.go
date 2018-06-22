@@ -31,3 +31,7 @@ func (bishop *Bishop) validMoves() []Coordinate {
 	}
 	return potentialMoves
 }
+
+func (bishop *Bishop) getPieceType() PieceType {
+	return BISHOP
+}

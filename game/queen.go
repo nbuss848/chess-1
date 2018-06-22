@@ -35,3 +35,7 @@ func (queen *Queen) validMoves() []Coordinate {
 	}
 	return potentialMoves
 }
+
+func (queen *Queen) getPieceType() PieceType {
+	return QUEEN
+}

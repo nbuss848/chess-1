@@ -31,3 +31,7 @@ func (rook *Rook) validMoves() []Coordinate {
 	}
 	return potentialMoves
 }
+
+func (rook *Rook) getPieceType() PieceType {
+	return ROOK
+}

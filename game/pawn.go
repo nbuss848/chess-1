@@ -20,23 +20,32 @@ func (pawn *Pawn) updateValidMoves(board Board) {
 	if pawn.pieceSide == BLACK {
 		moveChange = -1
 	}
-	var oneMovePotentialCoordinate = Coordinate{Row: pawn.currentCoordinate.Row + moveChange, Column: pawn.currentCoordinate.Column}
+	oneMovePotentialCoordinate := Coordinate{Row: pawn.currentCoordinate.Row + moveChange, Column: pawn.currentCoordinate.Column}
 	if !board.isSpaceOccupied(oneMovePotentialCoordinate) {
 		pawn.potentialMoves[oneMovePotentialCoordinate] = true
 	}
-	var twoMovePotentialCoordinate = Coordinate{Row: oneMovePotentialCoordinate.Row + moveChange, Column: oneMovePotentialCoordinate.Column}
+	twoMovePotentialCoordinate := Coordinate{Row: oneMovePotentialCoordinate.Row + moveChange, Column: oneMovePotentialCoordinate.Column}
 	if !pawn.hasMoved && !board.isSpaceOccupied((twoMovePotentialCoordinate)) {
 		pawn.potentialMoves[twoMovePotentialCoordinate] = true
 	}
-	var firstCaptureMove = Coordinate{Row: oneMovePotentialCoordinate.Row, Column: oneMovePotentialCoordinate.Column + 1}
+	firstCaptureMove := Coordinate{Row: oneMovePotentialCoordinate.Row, Column: oneMovePotentialCoordinate.Column + 1}
 	if board.isSpaceOccupied(firstCaptureMove) && board.getPieceSide(firstCaptureMove) != pawn.getPieceSide() {
 		pawn.potentialMoves[firstCaptureMove] = true
 	}
-	var secondCaptureMove = Coordinate{Row: oneMovePotentialCoordinate.Row, Column: oneMovePotentialCoordinate.Column - 1}
+	secondCaptureMove := Coordinate{Row: oneMovePotentialCoordinate.Row, Column: oneMovePotentialCoordinate.Column - 1}
 	if board.isSpaceOccupied(secondCaptureMove) && board.getPieceSide(secondCaptureMove) != pawn.getPieceSide() {
 		pawn.potentialMoves[secondCaptureMove] = true
 	}
-	//TODO en passant
+	lastMove := board.getPreviousMove()
+	if lastMove.piece.getPieceType() == PAWN && AbsIntVal(lastMove.fromCoordinate.Row-lastMove.toCoordinate.Row) == 2 && lastMove.toCoordinate.Row == pawn.currentCoordinate.Row {
+		if lastMove.fromCoordinate.Column-pawn.currentCoordinate.Column == -1 {
+			lowerColEnPassant := Coordinate{Row: pawn.currentCoordinate.Row + moveChange, Column: pawn.currentCoordinate.Column - 1}
+			pawn.potentialMoves[lowerColEnPassant] = true
+		} else if lastMove.fromCoordinate.Column-pawn.currentCoordinate.Column == 1 {
+			higherColEnPassant := Coordinate{Row: pawn.currentCoordinate.Row + moveChange, Column: pawn.currentCoordinate.Column + 1}
+			pawn.potentialMoves[higherColEnPassant] = true
+		}
+	}
 }
 
 func (pawn *Pawn) getPieceSide() Side {
@@ -49,4 +58,8 @@ func (pawn *Pawn) validMoves() []Coordinate {
 		potentialMoves = append(potentialMoves, k)
 	}
 	return potentialMoves
+}
+
+func (pawn *Pawn) getPieceType() PieceType {
+	return PAWN
 }

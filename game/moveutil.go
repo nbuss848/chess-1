@@ -5,28 +5,34 @@ package chessgame
 func getAllStraightLineMoves(coord Coordinate, board Board, side Side) []Coordinate {
 	var allPotentialMoves []Coordinate
 	potentialUpMoves := getStraightLineMoves(coord, board, side, true, true)
-	potentialDownMoves := getStraightLineMoves(coord, board, side, true, false)
-	potentialRightMoves := getStraightLineMoves(coord, board, side, false, true)
-	potentialLeftMoves := getStraightLineMoves(coord, board, side, false, false)
-
 	allPotentialMoves = append(allPotentialMoves, potentialUpMoves...)
+
+	potentialDownMoves := getStraightLineMoves(coord, board, side, true, false)
 	allPotentialMoves = append(allPotentialMoves, potentialDownMoves...)
+
+	potentialRightMoves := getStraightLineMoves(coord, board, side, false, true)
 	allPotentialMoves = append(allPotentialMoves, potentialRightMoves...)
+
+	potentialLeftMoves := getStraightLineMoves(coord, board, side, false, false)
 	allPotentialMoves = append(allPotentialMoves, potentialLeftMoves...)
+
 	return allPotentialMoves
 }
 
 func getAllDiagonalMoves(coord Coordinate, board Board, side Side) []Coordinate {
 	var allPotentialMoves []Coordinate
 	potentialLeftAndUpMoves := getDiagonalMoves(coord, board, side, true, false)
-	potentialRightAndUpMoves := getDiagonalMoves(coord, board, side, true, true)
-	potentialLeftAndDownMoves := getDiagonalMoves(coord, board, side, false, false)
-	potentialRightAndDownMoves := getDiagonalMoves(coord, board, side, true, false)
-
 	allPotentialMoves = append(allPotentialMoves, potentialLeftAndUpMoves...)
+
+	potentialRightAndUpMoves := getDiagonalMoves(coord, board, side, true, true)
 	allPotentialMoves = append(allPotentialMoves, potentialRightAndUpMoves...)
+
+	potentialLeftAndDownMoves := getDiagonalMoves(coord, board, side, false, false)
 	allPotentialMoves = append(allPotentialMoves, potentialLeftAndDownMoves...)
+
+	potentialRightAndDownMoves := getDiagonalMoves(coord, board, side, true, false)
 	allPotentialMoves = append(allPotentialMoves, potentialRightAndDownMoves...)
+
 	return allPotentialMoves
 }
 
@@ -122,4 +128,11 @@ func getNextDiagonalCoordinate(coord Coordinate, verticalChange int, horizontalC
 
 func (coord Coordinate) isLegal() bool {
 	return coord.Row <= 7 && coord.Row >= 0 && coord.Column <= 7 && coord.Column >= 0
+}
+
+func AbsIntVal(val int) int {
+	if val < 0 {
+		return -1 * val
+	}
+	return val
 }

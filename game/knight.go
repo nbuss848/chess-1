@@ -53,3 +53,7 @@ func (knight *Knight) validMoves() []Coordinate {
 	}
 	return potentialMoves
 }
+
+func (knight *Knight) getPieceType() PieceType {
+	return KNIGHT
+}
