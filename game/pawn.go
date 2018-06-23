@@ -33,14 +33,17 @@ func (pawn *Pawn) updateValidMoves(board *ChessBoard) {
 		pawn.potentialMoves[twoMovePotentialCoordinate] = true
 	}
 	firstCaptureMove := Coordinate{Row: oneMovePotentialCoordinate.Row, Column: oneMovePotentialCoordinate.Column + 1}
-	if board.isSpaceOccupied(firstCaptureMove) && board.getPieceSide(firstCaptureMove) != pawn.getPieceSide() {
+	if validateCaptureMove(board, firstCaptureMove, pawn.pieceSide, false) {
 		pawn.potentialMoves[firstCaptureMove] = true
 	}
 	secondCaptureMove := Coordinate{Row: oneMovePotentialCoordinate.Row, Column: oneMovePotentialCoordinate.Column - 1}
-	if board.isSpaceOccupied(secondCaptureMove) && board.getPieceSide(secondCaptureMove) != pawn.getPieceSide() {
+	if validateCaptureMove(board, firstCaptureMove, pawn.pieceSide, true) {
 		pawn.potentialMoves[secondCaptureMove] = true
 	}
-	lastMove := board.getPreviousMove()
+	lastMove, wasLastMove := board.getPreviousMove()
+	if wasLastMove == false {
+		return
+	}
 	if lastMove.piece.getPieceType() == PAWN && AbsIntVal(lastMove.fromCoordinate.Row-lastMove.toCoordinate.Row) == 2 && lastMove.toCoordinate.Row == pawn.currentCoordinate.Row {
 		if lastMove.fromCoordinate.Column-pawn.currentCoordinate.Column == -1 {
 			lowerColEnPassant := Coordinate{Row: pawn.currentCoordinate.Row + moveChange, Column: pawn.currentCoordinate.Column - 1}
@@ -70,4 +73,17 @@ func (pawn *Pawn) getPieceType() PieceType {
 
 func (pawn *Pawn) hasPieceMoved() bool {
 	return pawn.hasMoved
+}
+
+func validateCaptureMove(board *ChessBoard, coord Coordinate, pieceSide Side, left bool) bool {
+	if !coord.isLegal() {
+		return false
+	}
+	if !board.isSpaceOccupied(coord) {
+		return false
+	}
+	if board.getPieceSide(coord) != pieceSide {
+		return false
+	}
+	return true
 }

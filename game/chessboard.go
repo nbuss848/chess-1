@@ -68,8 +68,11 @@ func (board *ChessBoard) getPieceSide(coord Coordinate) Side {
 	return board.BoardPieces[coord.Row][coord.Column].getPieceSide()
 }
 
-func (board *ChessBoard) getPreviousMove() Move {
-	return board.MoveLog[len(board.MoveLog)-1]
+func (board *ChessBoard) getPreviousMove() (Move, bool) {
+	if len(board.MoveLog) == 0 {
+		return Move{}, false
+	}
+	return board.MoveLog[len(board.MoveLog)-1], true
 }
 
 func (board *ChessBoard) hasPieceMoved(coord Coordinate) bool {
