@@ -6,13 +6,15 @@ type Rook struct {
 	currentCoordinate Coordinate
 	pieceSide         Side
 	potentialMoves    map[Coordinate]bool
+	hasMoved          bool
 }
 
 func (rook *Rook) updatePosition(coord Coordinate) {
 	rook.currentCoordinate = coord
+	rook.hasMoved = true
 }
 
-func (rook *Rook) updateValidMoves(board Board) {
+func (rook *Rook) updateValidMoves(board *ChessBoard) {
 	rook.potentialMoves = make(map[Coordinate]bool)
 	allMoves := getAllStraightLineMoves(rook.currentCoordinate, board, rook.pieceSide)
 	for i := 0; i < len(allMoves); i++ {
@@ -34,4 +36,8 @@ func (rook *Rook) validMoves() []Coordinate {
 
 func (rook *Rook) getPieceType() PieceType {
 	return ROOK
+}
+
+func (rook *Rook) hasPieceMoved() bool {
+	return rook.hasMoved
 }

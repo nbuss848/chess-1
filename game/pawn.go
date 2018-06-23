@@ -14,7 +14,7 @@ func (pawn *Pawn) updatePosition(coord Coordinate) {
 	pawn.hasMoved = true
 }
 
-func (pawn *Pawn) updateValidMoves(board Board) {
+func (pawn *Pawn) updateValidMoves(board *ChessBoard) {
 	pawn.potentialMoves = make(map[Coordinate]bool)
 	moveChange := 1
 	if pawn.pieceSide == BLACK {
@@ -62,4 +62,8 @@ func (pawn *Pawn) validMoves() []Coordinate {
 
 func (pawn *Pawn) getPieceType() PieceType {
 	return PAWN
+}
+
+func (pawn *Pawn) hasPieceMoved() bool {
+	return pawn.hasMoved
 }

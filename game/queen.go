@@ -6,13 +6,15 @@ type Queen struct {
 	currentCoordinate Coordinate
 	pieceSide         Side
 	potentialMoves    map[Coordinate]bool
+	hasMoved          bool
 }
 
 func (queen *Queen) updatePosition(coord Coordinate) {
 	queen.currentCoordinate = coord
+	queen.hasMoved = true
 }
 
-func (queen *Queen) updateValidMoves(board Board) {
+func (queen *Queen) updateValidMoves(board *ChessBoard) {
 	queen.potentialMoves = make(map[Coordinate]bool)
 	allStraightLineMoves := getAllStraightLineMoves(queen.currentCoordinate, board, queen.pieceSide)
 	for i := 0; i < len(allStraightLineMoves); i++ {
@@ -38,4 +40,8 @@ func (queen *Queen) validMoves() []Coordinate {
 
 func (queen *Queen) getPieceType() PieceType {
 	return QUEEN
+}
+
+func (queen *Queen) hasPieceMoved() bool {
+	return queen.hasMoved
 }
