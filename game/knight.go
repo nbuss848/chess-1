@@ -14,32 +14,26 @@ func (knight *Knight) updatePosition(coord Coordinate) {
 
 func (knight *Knight) updateValidMoves(board Board) {
 	knight.potentialMoves = make(map[Coordinate]bool)
-	for i := -2; i <= 2; i += 4 {
-		newRow := knight.currentCoordinate.Row + i
-		newColumn := knight.currentCoordinate.Column + 1
-
-		newVertCoordLeft := Coordinate{Row: newRow, Column: knight.currentCoordinate.Column - 1}
-		newVertCoordRight := Coordinate{Row: newRow, Column: knight.currentCoordinate.Column + 1}
-		newHorizontalCoordUp := Coordinate{Row: knight.currentCoordinate.Row - 1, Column: newColumn}
-		newHorizontalCoordDown := Coordinate{Row: knight.currentCoordinate.Row + 1, Column: newColumn}
-
-		canMoveLeft, _ := canMoveToSquare(newVertCoordLeft, board, knight.pieceSide)
-		if canMoveLeft {
-			knight.potentialMoves[newVertCoordLeft] = true
-		}
-		canMoveRight, _ := canMoveToSquare(newVertCoordRight, board, knight.pieceSide)
-		if canMoveRight {
-			knight.potentialMoves[newVertCoordRight] = true
-		}
-		canMoveUp, _ := canMoveToSquare(newHorizontalCoordUp, board, knight.pieceSide)
-		if canMoveUp {
-			knight.potentialMoves[newHorizontalCoordUp] = true
-		}
-		canMoveDown, _ := canMoveToSquare(newHorizontalCoordDown, board, knight.pieceSide)
-		if canMoveDown {
-			knight.potentialMoves[newHorizontalCoordDown] = true
+	allPotentialCoordinates := getAllPossibleKnightMoves(knight.currentCoordinate)
+	for i := 0; i < len(allPotentialCoordinates); i++ {
+		canMove, _ := canMoveToSquare(allPotentialCoordinates[i], board, knight.pieceSide)
+		if canMove {
+			knight.potentialMoves[allPotentialCoordinates[i]] = true
 		}
 	}
+}
+
+func getAllPossibleKnightMoves(coord Coordinate) []Coordinate {
+	var coordinates []Coordinate
+	for i := -2; i <= 2; i += 4 {
+		newRow := coord.Row + i
+		newColumn := coord.Column + 1
+		coordinates = append(coordinates, Coordinate{Row: newRow, Column: coord.Column - 1})
+		coordinates = append(coordinates, Coordinate{Row: newRow, Column: coord.Column + 1})
+		coordinates = append(coordinates, Coordinate{Row: coord.Row - 1, Column: newColumn})
+		coordinates = append(coordinates, Coordinate{Row: coord.Row + 1, Column: newColumn})
+	}
+	return coordinates
 }
 
 func (knight *Knight) getPieceSide() Side {

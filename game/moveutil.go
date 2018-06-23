@@ -1,7 +1,7 @@
 // moveutil
 package chessgame
 
-// Gets all straight line moves, given a pieces coordinates, its side, and a board. Used for rooks and queens
+// Gets all straight line moves, given a piece's coordinates, its side, and a board. Used for rooks and queens
 func getAllStraightLineMoves(coord Coordinate, board Board, side Side) []Coordinate {
 	var allPotentialMoves []Coordinate
 	potentialUpMoves := getStraightLineMoves(coord, board, side, true, true)

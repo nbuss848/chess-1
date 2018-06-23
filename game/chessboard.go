@@ -17,6 +17,7 @@ type Board interface {
 	isSpaceOccupied(coord Coordinate) bool
 	getPieceSide(coord Coordinate) Side
 	getPreviousMove() Move
+	getPieceType(coord Coordinate) PieceType
 }
 
 // TODO: combine isSpaceOccupied with getPieceSide
@@ -27,7 +28,10 @@ func (board BoardData) isSpaceOccupied(coord Coordinate) bool {
 	return false
 }
 
-// TODO: research how enumerators work in Go
+func (board BoardData) getPieceType(coord Coordinate) PieceType {
+	return board.getPieceType(coord)
+}
+
 func (board BoardData) getPieceSide(coord Coordinate) Side {
 	return board.BoardPieces[coord.Row][coord.Column].getPieceSide(coord)
 }
