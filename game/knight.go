@@ -9,6 +9,10 @@ type Knight struct {
 	hasMoved          bool
 }
 
+func newKnight(knightSide Side, coord Coordinate) Knight {
+	return Knight{currentCoordinate: coord, pieceSide: knightSide, hasMoved: false}
+}
+
 func (knight *Knight) updatePosition(coord Coordinate) {
 	knight.currentCoordinate = coord
 	knight.hasMoved = true

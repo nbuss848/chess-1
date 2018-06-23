@@ -10,9 +10,17 @@ type King struct {
 	hasMoved          bool
 }
 
+func newKing(kingSide Side, coord Coordinate) King {
+	return King{currentCoordinate: coord, pieceSide: kingSide, hasMoved: false, inCheck: false}
+}
+
 func (king *King) updatePosition(newCoord Coordinate) {
 	king.currentCoordinate = newCoord
 	king.hasMoved = true
+}
+
+func (king *King) hasPieceMoved() bool {
+	return king.hasMoved
 }
 
 func (king *King) updateValidMoves(board *ChessBoard) {

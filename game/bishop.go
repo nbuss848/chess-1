@@ -9,6 +9,10 @@ type Bishop struct {
 	hasMoved          bool
 }
 
+func newBishop(bishopSide Side, coord Coordinate) Bishop {
+	return Bishop{currentCoordinate: coord, pieceSide: bishopSide, hasMoved: false}
+}
+
 func (bishop *Bishop) updatePosition(coord Coordinate) {
 	bishop.currentCoordinate = coord
 	bishop.hasMoved = true

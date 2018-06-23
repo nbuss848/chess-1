@@ -9,6 +9,10 @@ type Pawn struct {
 	hasMoved          bool
 }
 
+func newPawn(pawnSide Side, coord Coordinate) Pawn {
+	return Pawn{currentCoordinate: coord, pieceSide: pawnSide, hasMoved: false}
+}
+
 func (pawn *Pawn) updatePosition(coord Coordinate) {
 	pawn.currentCoordinate = coord
 	pawn.hasMoved = true

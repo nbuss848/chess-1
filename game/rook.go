@@ -9,6 +9,10 @@ type Rook struct {
 	hasMoved          bool
 }
 
+func newRook(rookSide Side, coord Coordinate) Rook {
+	return Rook{currentCoordinate: coord, pieceSide: rookSide, hasMoved: false}
+}
+
 func (rook *Rook) updatePosition(coord Coordinate) {
 	rook.currentCoordinate = coord
 	rook.hasMoved = true

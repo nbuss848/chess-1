@@ -9,6 +9,10 @@ type Queen struct {
 	hasMoved          bool
 }
 
+func newQueen(queenSide Side, coord Coordinate) Queen {
+	return Queen{currentCoordinate: coord, pieceSide: queenSide, hasMoved: false}
+}
+
 func (queen *Queen) updatePosition(coord Coordinate) {
 	queen.currentCoordinate = coord
 	queen.hasMoved = true

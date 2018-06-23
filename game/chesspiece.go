@@ -10,7 +10,7 @@ type ChessPiece interface {
 	validMoves() []Coordinate
 	updatePosition(coord Coordinate)
 	updateValidMoves(board *ChessBoard)
-	getPieceSide(coord Coordinate) Side
+	getPieceSide() Side
 	getPieceType() PieceType
 	hasPieceMoved() bool
 }
