@@ -5,7 +5,6 @@ type King struct {
 	id                int
 	currentCoordinate Coordinate
 	pieceSide         Side
-	potentialMoves    map[Coordinate]bool
 	inCheck           bool
 	hasMoved          bool
 }
@@ -23,28 +22,21 @@ func (king *King) hasPieceMoved() bool {
 	return king.hasMoved
 }
 
-func (king *King) updateValidMoves(board *ChessBoard) {
-	king.potentialMoves = make(map[Coordinate]bool)
+func (king *King) validMoves(board *ChessBoard) map[Coordinate]bool {
+	validMoves := make(map[Coordinate]bool)
 	potentialCoordinates := getSurroundingCoordinates(king.currentCoordinate)
 	for i := 0; i < len(potentialCoordinates); i++ {
 		if !willKingMoveLeadToCheck(potentialCoordinates[i], board, king.pieceSide) {
-			king.potentialMoves[potentialCoordinates[i]] = true
+			validMoves[potentialCoordinates[i]] = true
 		}
 	}
 	if king.canCastle(board, true) {
-		king.potentialMoves[getCastleCoordinate(king.currentCoordinate, true)] = true
+		validMoves[getCastleCoordinate(king.currentCoordinate, true)] = true
 	}
 	if king.canCastle(board, false) {
-		king.potentialMoves[getCastleCoordinate(king.currentCoordinate, false)] = true
+		validMoves[getCastleCoordinate(king.currentCoordinate, false)] = true
 	}
-}
-
-func (king *King) validMoves() []Coordinate {
-	var potentialMoves []Coordinate
-	for k := range king.potentialMoves {
-		potentialMoves = append(potentialMoves, k)
-	}
-	return potentialMoves
+	return validMoves
 }
 
 func (king *King) getPieceType() PieceType {

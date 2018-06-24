@@ -5,7 +5,6 @@ type Bishop struct {
 	id                int
 	currentCoordinate Coordinate
 	pieceSide         Side
-	potentialMoves    map[Coordinate]bool
 	hasMoved          bool
 }
 
@@ -18,24 +17,17 @@ func (bishop *Bishop) updatePosition(coord Coordinate) {
 	bishop.hasMoved = true
 }
 
-func (bishop *Bishop) updateValidMoves(board *ChessBoard) {
-	bishop.potentialMoves = make(map[Coordinate]bool)
+func (bishop *Bishop) validMoves(board *ChessBoard) map[Coordinate]bool {
+	validMoves := make(map[Coordinate]bool)
 	allMoves := getAllDiagonalMoves(bishop.currentCoordinate, board, bishop.pieceSide)
 	for i := 0; i < len(allMoves); i++ {
-		bishop.potentialMoves[allMoves[i]] = true
+		validMoves[allMoves[i]] = true
 	}
+	return validMoves
 }
 
 func (bishop *Bishop) getPieceSide() Side {
 	return bishop.pieceSide
-}
-
-func (bishop *Bishop) validMoves() []Coordinate {
-	var potentialMoves []Coordinate
-	for k := range bishop.potentialMoves {
-		potentialMoves = append(potentialMoves, k)
-	}
-	return potentialMoves
 }
 
 func (bishop *Bishop) getPieceType() PieceType {

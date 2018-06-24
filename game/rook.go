@@ -18,24 +18,17 @@ func (rook *Rook) updatePosition(coord Coordinate) {
 	rook.hasMoved = true
 }
 
-func (rook *Rook) updateValidMoves(board *ChessBoard) {
-	rook.potentialMoves = make(map[Coordinate]bool)
+func (rook *Rook) validMoves(board *ChessBoard) map[Coordinate]bool {
+	validMoves := make(map[Coordinate]bool)
 	allMoves := getAllStraightLineMoves(rook.currentCoordinate, board, rook.pieceSide)
 	for i := 0; i < len(allMoves); i++ {
-		rook.potentialMoves[allMoves[i]] = true
+		validMoves[allMoves[i]] = true
 	}
+	return validMoves
 }
 
 func (rook *Rook) getPieceSide() Side {
 	return rook.pieceSide
-}
-
-func (rook *Rook) validMoves() []Coordinate {
-	var potentialMoves []Coordinate
-	for k := range rook.potentialMoves {
-		potentialMoves = append(potentialMoves, k)
-	}
-	return potentialMoves
 }
 
 func (rook *Rook) getPieceType() PieceType {
