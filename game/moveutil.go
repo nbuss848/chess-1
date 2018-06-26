@@ -30,7 +30,7 @@ func getAllDiagonalMoves(coord Coordinate, board *ChessBoard, side Side) []Coord
 	potentialLeftAndDownMoves := getDiagonalMoves(coord, board, side, false, false)
 	allPotentialMoves = append(allPotentialMoves, potentialLeftAndDownMoves...)
 
-	potentialRightAndDownMoves := getDiagonalMoves(coord, board, side, true, false)
+	potentialRightAndDownMoves := getDiagonalMoves(coord, board, side, false, true)
 	allPotentialMoves = append(allPotentialMoves, potentialRightAndDownMoves...)
 
 	return allPotentialMoves
@@ -104,7 +104,7 @@ func canMoveToSquare(coord Coordinate, board *ChessBoard, side Side) (bool, bool
 		return false, true
 	} else if board.isSpaceOccupied(coord) && board.getPieceSide(coord) == side {
 		return false, true
-	} else if board.isSpaceOccupied(coord) && board.getPieceSide(coord) == side {
+	} else if board.isSpaceOccupied(coord) && board.getPieceSide(coord) != side {
 		return true, true
 	} else {
 		return true, false
@@ -114,7 +114,7 @@ func canMoveToSquare(coord Coordinate, board *ChessBoard, side Side) (bool, bool
 func getNextStraightLineCoordinate(coord Coordinate, changeVal int, moveVertical bool) Coordinate {
 	if moveVertical {
 		newRow := coord.Row + changeVal
-		return Coordinate{Row: coord.Row, Column: newRow}
+		return Coordinate{Row: newRow, Column: coord.Column}
 	}
 	newCol := coord.Column + changeVal
 	return Coordinate{Row: coord.Row, Column: newCol}
