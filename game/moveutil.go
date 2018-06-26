@@ -66,9 +66,9 @@ func getStraightLineMoves(coord Coordinate, board *ChessBoard, side Side, moveVe
 
 func getDiagonalMoves(coord Coordinate, board *ChessBoard, side Side, moveUp bool, moveRight bool) []Coordinate {
 	var potentialMoves []Coordinate
-	columnChange := 1
+	columnChange := -1
 	if moveRight {
-		columnChange = -1
+		columnChange = 1
 	}
 	rowChange := 1
 	if moveUp {
