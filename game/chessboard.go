@@ -52,6 +52,15 @@ func createEmptyRow() []ChessPiece {
 	return []ChessPiece{nil, nil, nil, nil, nil, nil, nil, nil}
 }
 
+func createEmptyBoard() ChessBoard {
+	emptyBoard := [][]ChessPiece{}
+	for i := 0; i < 8; i++ {
+		emptyBoard = append(emptyBoard, createEmptyRow())
+	}
+	moveLog := []Move{}
+	return ChessBoard{BoardPieces: emptyBoard, MoveLog: moveLog}
+}
+
 // TODO: combine isSpaceOccupied with getPieceSide
 func (board *ChessBoard) isSpaceOccupied(coord Coordinate) bool {
 	if board.BoardPieces[coord.Row][coord.Column] != nil {
@@ -61,7 +70,7 @@ func (board *ChessBoard) isSpaceOccupied(coord Coordinate) bool {
 }
 
 func (board *ChessBoard) getPieceType(coord Coordinate) PieceType {
-	return board.getPieceType(coord)
+	return board.BoardPieces[coord.Row][coord.Column].getPieceType()
 }
 
 func (board *ChessBoard) getPieceSide(coord Coordinate) Side {

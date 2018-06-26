@@ -26,7 +26,7 @@ func (king *King) validMoves(board *ChessBoard) map[Coordinate]bool {
 	validMoves := make(map[Coordinate]bool)
 	potentialCoordinates := getSurroundingCoordinates(king.currentCoordinate)
 	for i := 0; i < len(potentialCoordinates); i++ {
-		if !willKingMoveLeadToCheck(potentialCoordinates[i], board, king.pieceSide) {
+		if potentialCoordinates[i].isLegal() && !isSpaceOccupiedBySameSidePiece(potentialCoordinates[i], board, king.pieceSide) && !willKingMoveLeadToCheck(potentialCoordinates[i], board, king.pieceSide) {
 			validMoves[potentialCoordinates[i]] = true
 		}
 	}
@@ -37,6 +37,16 @@ func (king *King) validMoves(board *ChessBoard) map[Coordinate]bool {
 		validMoves[getCastleCoordinate(king.currentCoordinate, false)] = true
 	}
 	return validMoves
+}
+
+func isSpaceOccupiedBySameSidePiece(coord Coordinate, board *ChessBoard, pieceSide Side) bool {
+	if !board.isSpaceOccupied(coord) {
+		return false
+	}
+	if board.getPieceSide(coord) != pieceSide {
+		return false
+	}
+	return true
 }
 
 func (king *King) getPieceType() PieceType {
@@ -59,7 +69,7 @@ func (king *King) canCastle(board *ChessBoard, castleLeft bool) bool {
 	if castleLeft {
 		boardEdge = 0
 	}
-	newCoord := Coordinate{Row: king.currentCoordinate.Row, Column: king.currentCoordinate.Column + 1}
+	newCoord := Coordinate{Row: king.currentCoordinate.Row, Column: king.currentCoordinate.Column + changeVal}
 	for newCoord.isLegal() {
 		if board.isSpaceOccupied(newCoord) && newCoord.Column != boardEdge {
 			return false
@@ -79,7 +89,7 @@ func getCastleCoordinate(coord Coordinate, castleLeft bool) Coordinate {
 	if castleLeft {
 		return Coordinate{Row: coord.Row, Column: coord.Column + 2}
 	} else {
-		return Coordinate{Row: coord.Row, Column: coord.Column + 2}
+		return Coordinate{Row: coord.Row, Column: coord.Column - 2}
 	}
 }
 
@@ -185,7 +195,7 @@ func isSpaceThreatenedByStraightLine(board *ChessBoard, coord Coordinate, pieceS
 		if !currentCoord.isLegal() {
 			return false
 		}
-		if board.isSpaceOccupied(coord) {
+		if board.isSpaceOccupied(currentCoord) {
 			canThreatenQueen := canCoordinateThreaten(board, currentCoord, pieceSide, QUEEN)
 			canThreatenRook := canCoordinateThreaten(board, currentCoord, pieceSide, ROOK)
 			if canThreatenQueen || canThreatenRook {
