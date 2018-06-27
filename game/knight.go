@@ -33,7 +33,7 @@ func getAllPossibleKnightMoves(coord Coordinate) []Coordinate {
 	var coordinates []Coordinate
 	for i := -2; i <= 2; i += 4 {
 		newRow := coord.Row + i
-		newColumn := coord.Column + 1
+		newColumn := coord.Column + i
 		coordinates = append(coordinates, Coordinate{Row: newRow, Column: coord.Column - 1})
 		coordinates = append(coordinates, Coordinate{Row: newRow, Column: coord.Column + 1})
 		coordinates = append(coordinates, Coordinate{Row: coord.Row - 1, Column: newColumn})
