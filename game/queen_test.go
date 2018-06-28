@@ -42,3 +42,19 @@ func TestQueenMovesTrappedByOwnPieces(t *testing.T) {
 		t.Fatalf("Expected 7 moves, got %d instead", len(moves))
 	}
 }
+
+func TestQueenMovesCapture(t *testing.T) {
+	board := createEmptyBoard()
+	queen := newQueen(WHITE, Coordinate{0, 0})
+	enemyKnight := newKnight(BLACK, Coordinate{1, 0})
+	board.BoardPieces[0][0] = &queen
+	board.BoardPieces[1][0] = &enemyKnight
+	moves := queen.validMoves(&board)
+	if len(moves) != 15 {
+		t.Fatalf("Expected 15 moves, got %d instead", len(moves))
+	}
+	_, ok := moves[Coordinate{1, 0}]
+	if !ok {
+		t.Fatalf("Row 1, column 0 should be valid move")
+	}
+}

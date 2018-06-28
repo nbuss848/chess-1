@@ -36,7 +36,7 @@ func (pawn *Pawn) validMoves(board *ChessBoard) map[Coordinate]bool {
 		validMoves[firstCaptureMove] = true
 	}
 	secondCaptureMove := Coordinate{Row: oneMovePotentialCoordinate.Row, Column: oneMovePotentialCoordinate.Column - 1}
-	if validateCaptureMove(board, firstCaptureMove, pawn.pieceSide, true) {
+	if validateCaptureMove(board, secondCaptureMove, pawn.pieceSide, true) {
 		validMoves[secondCaptureMove] = true
 	}
 	lastMove, wasLastMove := board.getPreviousMove()
@@ -74,7 +74,7 @@ func validateCaptureMove(board *ChessBoard, coord Coordinate, pieceSide Side, le
 	if !board.isSpaceOccupied(coord) {
 		return false
 	}
-	if board.getPieceSide(coord) != pieceSide {
+	if board.getPieceSide(coord) == pieceSide {
 		return false
 	}
 	return true
