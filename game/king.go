@@ -105,10 +105,10 @@ func willKingMoveLeadToCheck(coord Coordinate, board *ChessBoard, pieceSide Side
 	if isSpaceThreatenedByKnight(coord, board, pieceSide) {
 		return true
 	}
-	if isSpaceThreatenedByAnyDiagonals(coord, board, pieceSide, Coordinate{}) {
+	if isSpaceThreatenedByAnyDiagonals(coord, board, pieceSide) {
 		return true
 	}
-	if isSpaceThreatenedByAnyStraightLines(coord, board, pieceSide, Coordinate{}) {
+	if isSpaceThreatenedByAnyStraightLines(coord, board, pieceSide) {
 		return true
 	}
 	if isSpaceThreatenedByKing(coord, board, pieceSide) {
@@ -145,33 +145,33 @@ func isSpaceThreatenedByKnight(coord Coordinate, board *ChessBoard, pieceSide Si
 	return false
 }
 
-func isSpaceThreatenedByAnyDiagonals(coord Coordinate, board *ChessBoard, pieceSide Side, ignoreCoord Coordinate) bool {
-	if isSpaceThreatenedByDiagonal(coord, board, pieceSide, -1, 1, ignoreCoord) {
+func isSpaceThreatenedByAnyDiagonals(coord Coordinate, board *ChessBoard, pieceSide Side) bool {
+	if isSpaceThreatenedByDiagonal(coord, board, pieceSide, -1, 1) {
 		return true
 	}
-	if isSpaceThreatenedByDiagonal(coord, board, pieceSide, -1, -1, ignoreCoord) {
+	if isSpaceThreatenedByDiagonal(coord, board, pieceSide, -1, -1) {
 		return true
 	}
-	if isSpaceThreatenedByDiagonal(coord, board, pieceSide, 1, -1, ignoreCoord) {
+	if isSpaceThreatenedByDiagonal(coord, board, pieceSide, 1, -1) {
 		return true
 	}
-	if isSpaceThreatenedByDiagonal(coord, board, pieceSide, 1, 1, ignoreCoord) {
+	if isSpaceThreatenedByDiagonal(coord, board, pieceSide, 1, 1) {
 		return true
 	}
 	return false
 }
 
-func isSpaceThreatenedByAnyStraightLines(coord Coordinate, board *ChessBoard, pieceSide Side, ignoreCoord Coordinate) bool {
-	if isSpaceThreatenedByStraightLine(board, coord, pieceSide, false, -1, ignoreCoord) {
+func isSpaceThreatenedByAnyStraightLines(coord Coordinate, board *ChessBoard, pieceSide Side) bool {
+	if isSpaceThreatenedByStraightLine(board, coord, pieceSide, false, -1) {
 		return true
 	}
-	if isSpaceThreatenedByStraightLine(board, coord, pieceSide, false, 1, ignoreCoord) {
+	if isSpaceThreatenedByStraightLine(board, coord, pieceSide, false, 1) {
 		return true
 	}
-	if isSpaceThreatenedByStraightLine(board, coord, pieceSide, true, -1, ignoreCoord) {
+	if isSpaceThreatenedByStraightLine(board, coord, pieceSide, true, -1) {
 		return true
 	}
-	if isSpaceThreatenedByStraightLine(board, coord, pieceSide, true, 1, ignoreCoord) {
+	if isSpaceThreatenedByStraightLine(board, coord, pieceSide, true, 1) {
 		return true
 	}
 	return false
@@ -187,7 +187,7 @@ func isSpaceThreatenedByKing(coord Coordinate, board *ChessBoard, pieceSide Side
 	return false
 }
 
-func isSpaceThreatenedByStraightLine(board *ChessBoard, coord Coordinate, pieceSide Side, vertical bool, changeVal int, ignoreCoord Coordinate) bool {
+func isSpaceThreatenedByStraightLine(board *ChessBoard, coord Coordinate, pieceSide Side, vertical bool, changeVal int) bool {
 	newRow := coord.Row
 	newColumn := coord.Column
 	if vertical {
@@ -197,7 +197,7 @@ func isSpaceThreatenedByStraightLine(board *ChessBoard, coord Coordinate, pieceS
 	}
 	currentCoord := Coordinate{Row: newRow, Column: newColumn}
 	for currentCoord.isLegal() {
-		if board.isSpaceOccupied(currentCoord) && currentCoord != ignoreCoord {
+		if board.isSpaceOccupied(currentCoord) {
 			canThreatenQueen := canCoordinateThreaten(board, currentCoord, pieceSide, QUEEN)
 			canThreatenRook := canCoordinateThreaten(board, currentCoord, pieceSide, ROOK)
 			if canThreatenQueen || canThreatenRook {
@@ -214,10 +214,10 @@ func isSpaceThreatenedByStraightLine(board *ChessBoard, coord Coordinate, pieceS
 	return false
 }
 
-func isSpaceThreatenedByDiagonal(coord Coordinate, board *ChessBoard, pieceSide Side, rowChange int, colChange int, ignoreCoord Coordinate) bool {
+func isSpaceThreatenedByDiagonal(coord Coordinate, board *ChessBoard, pieceSide Side, rowChange int, colChange int) bool {
 	currentCoord := Coordinate{Row: coord.Row + rowChange, Column: coord.Column + colChange}
 	for currentCoord.isLegal() {
-		if board.isSpaceOccupied(currentCoord) && currentCoord != ignoreCoord {
+		if board.isSpaceOccupied(currentCoord) {
 			canThreatenQueen := canCoordinateThreaten(board, currentCoord, pieceSide, QUEEN)
 			canThreatenBishop := canCoordinateThreaten(board, currentCoord, pieceSide, BISHOP)
 			if canThreatenBishop || canThreatenQueen {
@@ -265,10 +265,55 @@ func getSurroundingCoordinates(coord Coordinate) []Coordinate {
 
 // Checks whether moving given piece (specified by pieceToMoveCoord) will expose the king
 func willMoveExposeKing(kingCoord Coordinate, pieceToMoveCoord Coordinate, pieceSide Side, board *ChessBoard) bool {
-	threatenedByAnyStraightLines := isSpaceThreatenedByAnyStraightLines(kingCoord, board, pieceSide, pieceToMoveCoord)
-	threatenedByAnyDiagonals := isSpaceThreatenedByAnyDiagonals(kingCoord, board, pieceSide, pieceToMoveCoord)
-	if threatenedByAnyStraightLines || threatenedByAnyDiagonals {
-		return true
+	if !areCoordinatesAligned(kingCoord, pieceToMoveCoord) {
+		return false
+	}
+	return doesPathContainsThreat(board, kingCoord, pieceToMoveCoord, pieceSide)
+}
+
+// Checks whether path to king that moving the piece at pieceToMoveCoord will create a threat to the king
+func doesPathContainsThreat(board *ChessBoard, kingCoord Coordinate, pieceToMoveCoord Coordinate, pieceSide Side) bool {
+	rowChange := 0
+	if pieceToMoveCoord.Row > kingCoord.Row {
+		rowChange = 1
+	} else if pieceToMoveCoord.Row < kingCoord.Row {
+		rowChange = -1
+	}
+	colChange := 0
+	if pieceToMoveCoord.Column > kingCoord.Column {
+		colChange = 1
+	} else if pieceToMoveCoord.Column < kingCoord.Column {
+		colChange = -1
+	}
+	rookOrBishopThreat := ROOK
+	if kingCoord.Row != pieceToMoveCoord.Row && kingCoord.Column != pieceToMoveCoord.Column {
+		rookOrBishopThreat = BISHOP
+	}
+	currentCoord := Coordinate{kingCoord.Row + rowChange, kingCoord.Column + colChange}
+	pastPieceToMove := false
+	for currentCoord.isLegal() {
+		if currentCoord == pieceToMoveCoord {
+			pastPieceToMove = true
+			currentCoord.Column += colChange
+			currentCoord.Row += rowChange
+			continue
+		}
+		if !board.isSpaceOccupied(currentCoord) {
+			currentCoord.Column += colChange
+			currentCoord.Row += rowChange
+			continue
+		}
+		if !pastPieceToMove {
+			return false
+		}
+		if pastPieceToMove && board.getPieceSide(currentCoord) == pieceSide {
+			return false
+		}
+		currentCoordPieceType := board.getPieceType(currentCoord)
+		if currentCoordPieceType == QUEEN || currentCoordPieceType == rookOrBishopThreat {
+			return true
+		}
+		return false
 	}
 	return false
 }

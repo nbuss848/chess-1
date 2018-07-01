@@ -118,3 +118,81 @@ func TestKingMovesCanCastle(t *testing.T) {
 		t.Fatalf("Expected 7 moves, got %d instead", len(moves))
 	}
 }
+
+func TestMoveExposesKing(t *testing.T) {
+	board := createEmptyBoard()
+	board.WhiteKing.currentCoordinate = Coordinate{0, 0}
+	rook := newRook(WHITE, Coordinate{1, 1})
+	board.BoardPieces[1][1] = &rook
+	enemyBishop := newBishop(BLACK, Coordinate{2, 2})
+	board.BoardPieces[2][2] = &enemyBishop
+	moves := rook.validMoves(&board)
+	if len(moves) != 0 {
+		t.Fatalf("Expected 0 moves, got %d instead", len(moves))
+	}
+}
+
+func TestMoveCapturesThreateningPiece(t *testing.T) {
+	board := createEmptyBoard()
+	board.BlackKing.currentCoordinate = Coordinate{7, 4}
+	enemyQueen := newQueen(WHITE, Coordinate{6, 4})
+	board.BoardPieces[6][4] = &enemyQueen
+	board.BlackKing.inCheck = true
+	board.BlackKing.threateningPieces = []ChessPiece{&enemyQueen}
+	knight := newKnight(BLACK, Coordinate{7, 2})
+	board.BoardPieces[4][3] = &knight
+	moves := knight.validMoves(&board)
+	if len(moves) != 1 {
+		t.Fatalf("Expected 1 move, got %d instead", len(moves))
+	}
+	_, ok := moves[Coordinate{6, 4}]
+	if !ok {
+		t.Fatalf("Only move should be to row 6 column 4")
+	}
+}
+
+func TestMoveBlocksThreateningPiece(t *testing.T) {
+	board := createEmptyBoard()
+	board.BlackKing.currentCoordinate = Coordinate{7, 4}
+	enemyQueen := newQueen(WHITE, Coordinate{5, 4})
+	board.BoardPieces[6][4] = &enemyQueen
+	board.BlackKing.inCheck = true
+	board.BlackKing.threateningPieces = []ChessPiece{&enemyQueen}
+	rook := newRook(BLACK, Coordinate{6, 7})
+	board.BoardPieces[6][7] = &rook
+	moves := rook.validMoves(&board)
+	if len(moves) != 1 {
+		t.Fatalf("Expected 1 move, got %d instead", len(moves))
+	}
+	_, ok := moves[Coordinate{6, 4}]
+	if !ok {
+		t.Fatalf("Only move should be to row 6 column 4")
+	}
+	pawn := newPawn(WHITE, Coordinate{6, 6})
+	board.BoardPieces[6][6] = &pawn
+	moves = rook.validMoves(&board)
+	if len(moves) != 0 {
+		t.Fatalf("Expected no moves, due to blocking pawn. Got %d instead", len(moves))
+	}
+}
+
+func TestMovesKingThreatenedByMultiplePieces(t *testing.T) {
+	board := createEmptyBoard()
+	board.BlackKing.currentCoordinate = Coordinate{7, 4}
+	enemyQueen := newQueen(WHITE, Coordinate{5, 4})
+	board.BoardPieces[5][4] = &enemyQueen
+	board.BoardPieces[7][4] = board.BlackKing
+	enemyKnight := newKnight(WHITE, Coordinate{5, 5})
+	board.BlackKing.inCheck = true
+	board.BlackKing.threateningPieces = []ChessPiece{&enemyQueen, &enemyKnight}
+	queen := newQueen(BLACK, Coordinate{6, 5})
+	board.BoardPieces[6][5] = &queen
+	moves := queen.validMoves(&board)
+	if len(moves) != 0 {
+		t.Fatalf("Expected no moves, got %d instead", len(moves))
+	}
+	moves = board.BlackKing.validMoves(&board)
+	if len(moves) != 2 {
+		t.Fatalf("Expected 2 valid moves for king, got %d instead", len(moves))
+	}
+}

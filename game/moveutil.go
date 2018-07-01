@@ -200,3 +200,19 @@ func getCheckBlockingCoords(kingCoord Coordinate, checkPieceCoord Coordinate, po
 	}
 	return blockingCoordinates
 }
+
+// Checks whether two coordinates are aligned across straight lines and diagonals
+func areCoordinatesAligned(coord1 Coordinate, coord2 Coordinate) bool {
+	if coord1.Row == coord2.Row {
+		return true
+	}
+	if coord1.Column == coord2.Column {
+		return true
+	}
+	rowAbsDif := AbsIntVal(coord1.Row - coord2.Row)
+	colAbsDif := AbsIntVal(coord1.Column - coord2.Column)
+	if rowAbsDif == colAbsDif {
+		return true
+	}
+	return false
+}
