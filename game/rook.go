@@ -9,6 +9,10 @@ type Rook struct {
 	hasMoved          bool
 }
 
+func (rook *Rook) getCurrentCoordinates() Coordinate {
+	return rook.currentCoordinate
+}
+
 func newRook(rookSide Side, coord Coordinate) Rook {
 	return Rook{currentCoordinate: coord, pieceSide: rookSide, hasMoved: false}
 }
@@ -19,12 +23,16 @@ func (rook *Rook) updatePosition(coord Coordinate) {
 }
 
 func (rook *Rook) validMoves(board *ChessBoard) map[Coordinate]bool {
-	validMoves := make(map[Coordinate]bool)
-	allMoves := getAllStraightLineMoves(rook.currentCoordinate, board, rook.pieceSide)
-	for i := 0; i < len(allMoves); i++ {
-		validMoves[allMoves[i]] = true
+	return getAllMovesForPiece(board, rook, getAllRookMoves)
+}
+
+func getAllRookMoves(board *ChessBoard, rook ChessPiece) map[Coordinate]bool {
+	allMovesSlice := getAllStraightLineMoves(rook.getCurrentCoordinates(), board, rook.getPieceSide())
+	moveMap := make(map[Coordinate]bool)
+	for i := 0; i < len(allMovesSlice); i++ {
+		moveMap[allMovesSlice[i]] = true
 	}
-	return validMoves
+	return moveMap
 }
 
 func (rook *Rook) getPieceSide() Side {

@@ -8,6 +8,10 @@ type Knight struct {
 	hasMoved          bool
 }
 
+func (knight *Knight) getCurrentCoordinates() Coordinate {
+	return knight.currentCoordinate
+}
+
 func newKnight(knightSide Side, coord Coordinate) Knight {
 	return Knight{currentCoordinate: coord, pieceSide: knightSide, hasMoved: false}
 }
@@ -18,10 +22,14 @@ func (knight *Knight) updatePosition(coord Coordinate) {
 }
 
 func (knight *Knight) validMoves(board *ChessBoard) map[Coordinate]bool {
+	return getAllMovesForPiece(board, knight, getAllKnightMoves)
+}
+
+func getAllKnightMoves(board *ChessBoard, knight ChessPiece) map[Coordinate]bool {
 	validMoves := make(map[Coordinate]bool)
-	allPotentialCoordinates := getAllPossibleKnightMoves(knight.currentCoordinate)
+	allPotentialCoordinates := getAllPossibleKnightMoves(knight.getCurrentCoordinates())
 	for i := 0; i < len(allPotentialCoordinates); i++ {
-		canMove, _ := canMoveToSquare(allPotentialCoordinates[i], board, knight.pieceSide)
+		canMove, _ := canMoveToSquare(allPotentialCoordinates[i], board, knight.getPieceSide())
 		if canMove {
 			validMoves[allPotentialCoordinates[i]] = true
 		}

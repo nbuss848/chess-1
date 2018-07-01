@@ -8,6 +8,10 @@ type Queen struct {
 	hasMoved          bool
 }
 
+func (queen *Queen) getCurrentCoordinates() Coordinate {
+	return queen.currentCoordinate
+}
+
 func newQueen(queenSide Side, coord Coordinate) Queen {
 	return Queen{currentCoordinate: coord, pieceSide: queenSide, hasMoved: false}
 }
@@ -18,12 +22,16 @@ func (queen *Queen) updatePosition(coord Coordinate) {
 }
 
 func (queen *Queen) validMoves(board *ChessBoard) map[Coordinate]bool {
+	return getAllMovesForPiece(board, queen, getAllQueenMoves)
+}
+
+func getAllQueenMoves(board *ChessBoard, queen ChessPiece) map[Coordinate]bool {
 	validMoves := make(map[Coordinate]bool)
-	allStraightLineMoves := getAllStraightLineMoves(queen.currentCoordinate, board, queen.pieceSide)
+	allStraightLineMoves := getAllStraightLineMoves(queen.getCurrentCoordinates(), board, queen.getPieceSide())
 	for i := 0; i < len(allStraightLineMoves); i++ {
 		validMoves[allStraightLineMoves[i]] = true
 	}
-	allDiagonalMoves := getAllDiagonalMoves(queen.currentCoordinate, board, queen.pieceSide)
+	allDiagonalMoves := getAllDiagonalMoves(queen.getCurrentCoordinates(), board, queen.getPieceSide())
 	for i := 0; i < len(allDiagonalMoves); i++ {
 		validMoves[allDiagonalMoves[i]] = true
 	}

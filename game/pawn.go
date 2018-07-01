@@ -8,6 +8,10 @@ type Pawn struct {
 	hasMoved          bool
 }
 
+func (pawn *Pawn) getCurrentCoordinates() Coordinate {
+	return pawn.currentCoordinate
+}
+
 func newPawn(pawnSide Side, coord Coordinate) Pawn {
 	return Pawn{currentCoordinate: coord, pieceSide: pawnSide, hasMoved: false}
 }
@@ -18,37 +22,43 @@ func (pawn *Pawn) updatePosition(coord Coordinate) {
 }
 
 func (pawn *Pawn) validMoves(board *ChessBoard) map[Coordinate]bool {
+	return getAllMovesForPiece(board, pawn, getAllPawnMoves)
+}
+
+func getAllPawnMoves(board *ChessBoard, pawn ChessPiece) map[Coordinate]bool {
 	validMoves := make(map[Coordinate]bool)
+	coords := pawn.getCurrentCoordinates()
+	pieceSide := pawn.getPieceSide()
 	moveChange := 1
-	if pawn.pieceSide == BLACK {
+	if pieceSide == BLACK {
 		moveChange = -1
 	}
-	oneMovePotentialCoordinate := Coordinate{Row: pawn.currentCoordinate.Row + moveChange, Column: pawn.currentCoordinate.Column}
+	oneMovePotentialCoordinate := Coordinate{Row: coords.Row + moveChange, Column: coords.Column}
 	if !board.isSpaceOccupied(oneMovePotentialCoordinate) {
 		validMoves[oneMovePotentialCoordinate] = true
 	}
 	twoMovePotentialCoordinate := Coordinate{Row: oneMovePotentialCoordinate.Row + moveChange, Column: oneMovePotentialCoordinate.Column}
-	if !pawn.hasMoved && !board.isSpaceOccupied((twoMovePotentialCoordinate)) {
+	if !pawn.hasPieceMoved() && !board.isSpaceOccupied((twoMovePotentialCoordinate)) {
 		validMoves[twoMovePotentialCoordinate] = true
 	}
 	firstCaptureMove := Coordinate{Row: oneMovePotentialCoordinate.Row, Column: oneMovePotentialCoordinate.Column + 1}
-	if validateCaptureMove(board, firstCaptureMove, pawn.pieceSide, false) {
+	if validateCaptureMove(board, firstCaptureMove, pieceSide, false) {
 		validMoves[firstCaptureMove] = true
 	}
 	secondCaptureMove := Coordinate{Row: oneMovePotentialCoordinate.Row, Column: oneMovePotentialCoordinate.Column - 1}
-	if validateCaptureMove(board, secondCaptureMove, pawn.pieceSide, true) {
+	if validateCaptureMove(board, secondCaptureMove, pieceSide, true) {
 		validMoves[secondCaptureMove] = true
 	}
 	lastMove, wasLastMove := board.getPreviousMove()
 	if wasLastMove == false {
 		return validMoves
 	}
-	if lastMove.piece.getPieceType() == PAWN && AbsIntVal(lastMove.fromCoordinate.Row-lastMove.toCoordinate.Row) == 2 && lastMove.toCoordinate.Row == pawn.currentCoordinate.Row {
-		if lastMove.fromCoordinate.Column-pawn.currentCoordinate.Column == -1 {
-			lowerColEnPassant := Coordinate{Row: pawn.currentCoordinate.Row + moveChange, Column: pawn.currentCoordinate.Column - 1}
+	if lastMove.piece.getPieceType() == PAWN && AbsIntVal(lastMove.fromCoordinate.Row-lastMove.toCoordinate.Row) == 2 && lastMove.toCoordinate.Row == coords.Row {
+		if lastMove.fromCoordinate.Column-coords.Column == -1 {
+			lowerColEnPassant := Coordinate{Row: coords.Row + moveChange, Column: coords.Column - 1}
 			validMoves[lowerColEnPassant] = true
-		} else if lastMove.fromCoordinate.Column-pawn.currentCoordinate.Column == 1 {
-			higherColEnPassant := Coordinate{Row: pawn.currentCoordinate.Row + moveChange, Column: pawn.currentCoordinate.Column + 1}
+		} else if lastMove.fromCoordinate.Column-coords.Column == 1 {
+			higherColEnPassant := Coordinate{Row: coords.Row + moveChange, Column: coords.Column + 1}
 			validMoves[higherColEnPassant] = true
 		}
 	}

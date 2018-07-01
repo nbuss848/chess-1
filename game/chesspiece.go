@@ -12,6 +12,7 @@ type ChessPiece interface {
 	getPieceSide() Side
 	getPieceType() PieceType
 	hasPieceMoved() bool
+	getCurrentCoordinates() Coordinate
 }
 
 type Side int
