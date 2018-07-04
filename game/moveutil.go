@@ -4,16 +4,16 @@ package chessgame
 // Gets all straight line moves, given a piece's coordinates, its side, and a board. Used for rooks and queens
 func getAllStraightLineMoves(coord Coordinate, board *ChessBoard, side Side) []Coordinate {
 	var allPotentialMoves []Coordinate
-	potentialUpMoves := getStraightLineMoves(coord, board, side, true, true)
+	potentialUpMoves := iterateCoordinates(coord, board, side, -1, 0, canMoveToSquare)
 	allPotentialMoves = append(allPotentialMoves, potentialUpMoves...)
 
-	potentialDownMoves := getStraightLineMoves(coord, board, side, true, false)
+	potentialDownMoves := iterateCoordinates(coord, board, side, 1, 0, canMoveToSquare)
 	allPotentialMoves = append(allPotentialMoves, potentialDownMoves...)
 
-	potentialRightMoves := getStraightLineMoves(coord, board, side, false, true)
+	potentialRightMoves := iterateCoordinates(coord, board, side, 0, 1, canMoveToSquare)
 	allPotentialMoves = append(allPotentialMoves, potentialRightMoves...)
 
-	potentialLeftMoves := getStraightLineMoves(coord, board, side, false, false)
+	potentialLeftMoves := iterateCoordinates(coord, board, side, 0, -1, canMoveToSquare)
 	allPotentialMoves = append(allPotentialMoves, potentialLeftMoves...)
 
 	return allPotentialMoves
@@ -21,81 +21,41 @@ func getAllStraightLineMoves(coord Coordinate, board *ChessBoard, side Side) []C
 
 func getAllDiagonalMoves(coord Coordinate, board *ChessBoard, side Side) []Coordinate {
 	var allPotentialMoves []Coordinate
-	potentialLeftAndUpMoves := getDiagonalMoves(coord, board, side, true, false)
+	potentialLeftAndUpMoves := iterateCoordinates(coord, board, side, -1, -1, canMoveToSquare)
 	allPotentialMoves = append(allPotentialMoves, potentialLeftAndUpMoves...)
 
-	potentialRightAndUpMoves := getDiagonalMoves(coord, board, side, true, true)
+	potentialRightAndUpMoves := iterateCoordinates(coord, board, side, -1, 1, canMoveToSquare)
 	allPotentialMoves = append(allPotentialMoves, potentialRightAndUpMoves...)
 
-	potentialLeftAndDownMoves := getDiagonalMoves(coord, board, side, false, false)
+	potentialLeftAndDownMoves := iterateCoordinates(coord, board, side, 1, -1, canMoveToSquare)
 	allPotentialMoves = append(allPotentialMoves, potentialLeftAndDownMoves...)
 
-	potentialRightAndDownMoves := getDiagonalMoves(coord, board, side, false, true)
+	potentialRightAndDownMoves := iterateCoordinates(coord, board, side, 1, 1, canMoveToSquare)
 	allPotentialMoves = append(allPotentialMoves, potentialRightAndDownMoves...)
 
 	return allPotentialMoves
 }
 
-// Gets straight line moves in single direction for a given coordinate, board, and side. moveVertical specifies whether piece should
-// move vertically or horizontally; increment specifies whether piece should move up or down (if vertical) or left or right (if horizontal)
-func getStraightLineMoves(coord Coordinate, board *ChessBoard, side Side, moveVertical bool, increment bool) []Coordinate {
-	var potentialMoves []Coordinate
-	var currentChangeVal int
-	if increment {
-		currentChangeVal = 1
-	} else {
-		currentChangeVal = -1
-	}
-	for {
-		newCoord := getNextStraightLineCoordinate(coord, currentChangeVal, moveVertical)
-		toAdd, toBreak := canMoveToSquare(newCoord, board, side)
-		if toAdd {
-			potentialMoves = append(potentialMoves, newCoord)
+// Iterates through coordinates based on row change and column change, adding coordinates using logic from appendLogic func
+func iterateCoordinates(coord Coordinate, board *ChessBoard, side Side, rowChange int, colChange int, appendLogic func(Coordinate, *ChessBoard, Side) (bool, bool)) []Coordinate {
+	var coordinates []Coordinate
+	currentCoord := getNextCoordinate(coord, rowChange, colChange)
+	for currentCoord.isLegal() {
+		appendCoord, toBreak := appendLogic(currentCoord, board, side)
+		if appendCoord {
+			coordinates = append(coordinates, currentCoord)
 		}
 		if toBreak {
 			break
 		}
-		if increment {
-			currentChangeVal++
-		} else {
-			currentChangeVal--
-		}
+		currentCoord = getNextCoordinate(currentCoord, rowChange, colChange)
 	}
-	return potentialMoves
+	return coordinates
 }
 
-func getDiagonalMoves(coord Coordinate, board *ChessBoard, side Side, moveUp bool, moveRight bool) []Coordinate {
-	var potentialMoves []Coordinate
-	columnChange := -1
-	if moveRight {
-		columnChange = 1
-	}
-	rowChange := 1
-	if moveUp {
-		rowChange = -1
-	}
-	for {
-		newCoord := getNextDiagonalCoordinate(coord, rowChange, columnChange)
-		toAdd, toBreak := canMoveToSquare(newCoord, board, side)
-		if toAdd {
-			potentialMoves = append(potentialMoves, newCoord)
-		}
-		if toBreak {
-			break
-		}
-
-		if moveUp {
-			rowChange--
-		} else {
-			rowChange++
-		}
-		if moveRight {
-			columnChange++
-		} else {
-			columnChange--
-		}
-	}
-	return potentialMoves
+// Given an amount to change the row and column by, gets the next coordinate
+func getNextCoordinate(coord Coordinate, rowChange int, colChange int) Coordinate {
+	return Coordinate{coord.Row + rowChange, coord.Column + colChange}
 }
 
 // Returns whether to add coordinate to potential moves list, and whether loop encompassing this method should break (if path stops)
@@ -111,25 +71,12 @@ func canMoveToSquare(coord Coordinate, board *ChessBoard, side Side) (bool, bool
 	}
 }
 
-func getNextStraightLineCoordinate(coord Coordinate, changeVal int, moveVertical bool) Coordinate {
-	if moveVertical {
-		newRow := coord.Row + changeVal
-		return Coordinate{Row: newRow, Column: coord.Column}
-	}
-	newCol := coord.Column + changeVal
-	return Coordinate{Row: coord.Row, Column: newCol}
-}
-
-func getNextDiagonalCoordinate(coord Coordinate, verticalChange int, horizontalChange int) Coordinate {
-	newRow := coord.Row + verticalChange
-	newCol := coord.Column + horizontalChange
-	return Coordinate{Row: newRow, Column: newCol}
-}
-
+// Checks whether coordinate is within legal bounds of chess board
 func (coord Coordinate) isLegal() bool {
 	return coord.Row <= 7 && coord.Row >= 0 && coord.Column <= 7 && coord.Column >= 0
 }
 
+// Returns absolute value of integer - Go Math library only provides this function for floats
 func AbsIntVal(val int) int {
 	if val < 0 {
 		return -1 * val
@@ -137,6 +84,7 @@ func AbsIntVal(val int) int {
 	return val
 }
 
+// Gets all possible moves for piece, taking king's check status and possibility of exposing king into account
 func getAllMovesForPiece(board *ChessBoard, piece ChessPiece, allMoves func(*ChessBoard, ChessPiece) map[Coordinate]bool) map[Coordinate]bool {
 	kingCoord := board.getKingCoordinate(piece.getPieceSide())
 	if willMoveExposeKing(kingCoord, piece.getCurrentCoordinates(), piece.getPieceSide(), board) {

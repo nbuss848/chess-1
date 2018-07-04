@@ -113,3 +113,17 @@ func (board *ChessBoard) getKingCoordinate(pieceSide Side) Coordinate {
 	}
 	return board.BlackKing.currentCoordinate
 }
+
+// Returns all valid moves for given side, as a dictionary with coordinates as keys and maps of coordinates and booleans as the values
+func (board *ChessBoard) getAllValidMovesForSide(pieceSide Side) map[Coordinate]map[Coordinate]bool {
+	moves := make(map[Coordinate]map[Coordinate]bool)
+	for row := 0; row < len(board.BoardPieces); row++ {
+		for col := 0; col < len(board.BoardPieces[row]); col++ {
+			currentCoord := Coordinate{row, col}
+			if board.isSpaceOccupied(currentCoord) && board.getPieceSide(currentCoord) == pieceSide {
+				moves[currentCoord] = board.BoardPieces[row][col].validMoves(board)
+			}
+		}
+	}
+	return moves
+}
