@@ -111,10 +111,10 @@ func getCastleCoordinate(coord Coordinate, castleLeft bool) Coordinate {
 
 // Checks if potential move by king will lead to check
 func willKingMoveLeadToCheck(coord Coordinate, board *ChessBoard, pieceSide Side) bool {
-	if isSpaceThreatenedByPawn(coord, board, pieceSide) {
+	if len(threateningPawnCoordinates(coord, board, pieceSide)) > 0 {
 		return true
 	}
-	if isSpaceThreatenedByKnight(coord, board, pieceSide) {
+	if len(threateningKnightCoordinates(coord, board, pieceSide)) > 0 {
 		return true
 	}
 	if len(threateningDiagonalCoords(coord, board, pieceSide)) > 0 {
@@ -130,7 +130,8 @@ func willKingMoveLeadToCheck(coord Coordinate, board *ChessBoard, pieceSide Side
 }
 
 // Checks if space is threatened by pawn
-func isSpaceThreatenedByPawn(coord Coordinate, board *ChessBoard, pieceSide Side) bool {
+func threateningPawnCoordinates(coord Coordinate, board *ChessBoard, pieceSide Side) []Coordinate {
+	var threateningCoordinates []Coordinate
 	firstPawnCol := coord.Column + 1
 	secondPawnCol := coord.Column - 1
 	threateningRow := coord.Row - 1
@@ -140,23 +141,24 @@ func isSpaceThreatenedByPawn(coord Coordinate, board *ChessBoard, pieceSide Side
 	firstPawnCoord := Coordinate{Row: threateningRow, Column: firstPawnCol}
 	secondPawnCoord := Coordinate{Row: threateningRow, Column: secondPawnCol}
 	if canCoordinateThreaten(board, firstPawnCoord, pieceSide, PAWN) {
-		return true
+		threateningCoordinates = append(threateningCoordinates, firstPawnCoord)
 	}
 	if canCoordinateThreaten(board, secondPawnCoord, pieceSide, PAWN) {
-		return true
+		threateningCoordinates = append(threateningCoordinates, secondPawnCoord)
 	}
-	return false
+	return threateningCoordinates
 }
 
 // Checks if space is threatened by a knight
-func isSpaceThreatenedByKnight(coord Coordinate, board *ChessBoard, pieceSide Side) bool {
+func threateningKnightCoordinates(coord Coordinate, board *ChessBoard, pieceSide Side) []Coordinate {
+	var threateningCoordinates []Coordinate
 	possibleKnightPositions := getAllPossibleKnightMoves(coord)
 	for i := 0; i < len(possibleKnightPositions); i++ {
 		if canCoordinateThreaten(board, possibleKnightPositions[i], pieceSide, KNIGHT) {
-			return true
+			threateningCoordinates = append(threateningCoordinates, possibleKnightPositions[i])
 		}
 	}
-	return false
+	return threateningCoordinates
 }
 
 // Checks whether space is threatened by opposing King
@@ -314,7 +316,22 @@ func doesPathContainThreat(board *ChessBoard, kingCoord Coordinate, pieceToMoveC
 	return false
 }
 
-/*
-func (king *King) updateKingStatus(board *Board) {
-
-}*/
+// Updates king's status - whether king is in check and what pieces are threatening king if it is in check
+func (king *King) updateKingStatus(board *ChessBoard) {
+	var threateningCoords []Coordinate
+	threateningCoords = append(threateningCoords, threateningStraightLineCoords(king.currentCoordinate, board, king.pieceSide)...)
+	threateningCoords = append(threateningCoords, threateningDiagonalCoords(king.currentCoordinate, board, king.pieceSide)...)
+	threateningCoords = append(threateningCoords, threateningKnightCoordinates(king.currentCoordinate, board, king.pieceSide)...)
+	threateningCoords = append(threateningCoords, threateningPawnCoordinates(king.currentCoordinate, board, king.pieceSide)...)
+	if len(threateningCoords) == 0 {
+		king.inCheck = false
+		return
+	}
+	king.inCheck = true
+	var threateningPieces []ChessPiece
+	for i := 0; i < len(threateningCoords); i++ {
+		coord := threateningCoords[i]
+		threateningPieces = append(threateningPieces, board.BoardPieces[coord.Row][coord.Column])
+	}
+	king.threateningPieces = threateningPieces
+}
