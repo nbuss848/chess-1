@@ -44,13 +44,13 @@ func TestCreateBoardBaseRows(t *testing.T) {
 	}
 	pieceTypeWhite = board.BoardPieces[0][3].getPieceType()
 	pieceTypeBlack = board.BoardPieces[7][3].getPieceType()
-	if pieceTypeWhite != QUEEN || pieceTypeBlack != QUEEN {
-		t.Fatalf("Expected QUEEN")
+	if pieceTypeWhite != KING || pieceTypeBlack != KING {
+		t.Fatalf("Expected KING")
 	}
 	pieceTypeWhite = board.BoardPieces[0][4].getPieceType()
 	pieceTypeBlack = board.BoardPieces[7][4].getPieceType()
-	if pieceTypeWhite != KING || pieceTypeBlack != KING {
-		t.Fatalf("Expected KING")
+	if pieceTypeWhite != QUEEN || pieceTypeBlack != QUEEN {
+		t.Fatalf("Expected QUEEN")
 	}
 	pieceTypeWhite = board.BoardPieces[0][5].getPieceType()
 	pieceTypeBlack = board.BoardPieces[7][5].getPieceType()
@@ -95,6 +95,28 @@ func TestCreateBoardEmptySpaces(t *testing.T) {
 		for j := 0; j < 8; j++ {
 			if board.BoardPieces[i][j] != nil {
 				t.Fatalf("Space should be nil")
+			}
+		}
+	}
+}
+
+func TestDeepCopyBoard(t *testing.T) {
+	board := CreateBoard()
+	clonedBoard := deepCopyBoard(&board)
+	for row := 0; row < 8; row++ {
+		for col := 0; col < 8; col++ {
+			coord := Coordinate{row, col}
+			if board.isSpaceOccupied(coord) != clonedBoard.isSpaceOccupied(coord) {
+				t.Fatalf("Row: %d Column: %d does not match", row, col)
+			}
+			if !board.isSpaceOccupied(coord) && !clonedBoard.isSpaceOccupied(coord) {
+				continue
+			}
+			if board.getPieceSide(coord) != clonedBoard.getPieceSide(coord) {
+				t.Fatalf("Row: %d Column: %d for boards do not have matching sides", row, col)
+			}
+			if board.getPieceType(coord) != clonedBoard.getPieceType(coord) {
+				t.Fatalf("Row: %d Column: %d for boards do not have matching piece types", row, col)
 			}
 		}
 	}

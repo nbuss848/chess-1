@@ -31,9 +31,9 @@ func (board *ChessBoard) TakeTurn(player ChessPlayer) TurnOutcome {
 	allValidMoves := board.getAllValidMovesForSide(side)
 	if inCheck && len(allValidMoves) == 0 {
 		if player.GetSide() == WHITE {
-			return WHITECHECKMATE
-		} else {
 			return BLACKCHECKMATE
+		} else {
+			return WHITECHECKMATE
 		}
 	}
 	if len(allValidMoves) == 0 {
@@ -80,7 +80,10 @@ func (board *ChessBoard) getAllValidMovesForSide(pieceSide Side) map[Coordinate]
 		for col := 0; col < len(board.BoardPieces[row]); col++ {
 			currentCoord := Coordinate{row, col}
 			if board.isSpaceOccupied(currentCoord) && board.getPieceSide(currentCoord) == pieceSide {
-				moves[currentCoord] = board.BoardPieces[row][col].validMoves(board)
+				pieceMoves := board.BoardPieces[row][col].validMoves(board)
+				if len(pieceMoves) != 0 {
+					moves[currentCoord] = pieceMoves
+				}
 			}
 		}
 	}
@@ -154,8 +157,8 @@ func CreateBoard() ChessBoard {
 	blackPawns := createPawnRow(6, BLACK)
 	blackBaseRow := createBaseRow(7, BLACK)
 	board := [][]ChessPiece{whiteBaseRow, whitePawns, emptyRow1, emptyRow2, emptyRow3, emptyRow4, blackPawns, blackBaseRow}
-	whiteKing := board[0][4].(*King)
-	blackKing := board[7][4].(*King)
+	whiteKing := board[0][3].(*King)
+	blackKing := board[7][3].(*King)
 	return ChessBoard{board, MoveLog, whiteKing, blackKing}
 }
 
@@ -164,12 +167,12 @@ func createBaseRow(row int, pieceSide Side) []ChessPiece {
 	leftRook := newRook(pieceSide, Coordinate{Row: row, Column: 0})
 	leftKnight := newKnight(pieceSide, Coordinate{Row: row, Column: 1})
 	leftbishop := newBishop(pieceSide, Coordinate{Row: row, Column: 2})
-	queen := newQueen(pieceSide, Coordinate{Row: row, Column: 3})
-	king := newKing(pieceSide, Coordinate{Row: row, Column: 4})
+	king := newKing(pieceSide, Coordinate{Row: row, Column: 3})
+	queen := newQueen(pieceSide, Coordinate{Row: row, Column: 4})
 	rightBishop := newBishop(pieceSide, Coordinate{Row: row, Column: 5})
 	rightKnight := newKnight(pieceSide, Coordinate{Row: row, Column: 6})
 	rightRook := newRook(pieceSide, Coordinate{Row: row, Column: 7})
-	return []ChessPiece{&leftRook, &leftKnight, &leftbishop, &queen, &king, &rightBishop, &rightKnight, &rightRook}
+	return []ChessPiece{&leftRook, &leftKnight, &leftbishop, &king, &queen, &rightBishop, &rightKnight, &rightRook}
 }
 
 // Creates a deep copy of the given ChessBoard

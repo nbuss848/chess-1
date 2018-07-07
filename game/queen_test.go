@@ -58,3 +58,12 @@ func TestQueenMovesCapture(t *testing.T) {
 		t.Fatalf("Row 1, column 0 should be valid move")
 	}
 }
+
+func TestQueenMovesOnlyDiagonal(t *testing.T) {
+	board := CreateBoard()
+	board.BoardPieces[6][3] = nil
+	moves := board.BoardPieces[7][4].validMoves(&board)
+	if len(moves) != 4 {
+		t.Fatalf("Expected 4 moves, got %d instead", len(moves))
+	}
+}
