@@ -9,6 +9,11 @@ type Rook struct {
 	hasMoved          bool
 }
 
+// Sets hasMoved property in Rook struct. Used for cloning
+func (rook *Rook) setHasMoved(hasMoved bool) {
+	rook.hasMoved = hasMoved
+}
+
 func (rook *Rook) getCurrentCoordinates() Coordinate {
 	return rook.currentCoordinate
 }

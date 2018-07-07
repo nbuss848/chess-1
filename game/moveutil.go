@@ -102,12 +102,12 @@ func getAllMovesForPiece(board *ChessBoard, piece ChessPiece, allMoves func(*Che
 		return nil
 	}
 	validCheckMoves := make(map[Coordinate]bool)
-	_, ok := validMoves[king.threateningPieces[0].getCurrentCoordinates()]
+	_, ok := validMoves[king.threateningPieces[0].coord]
 	if ok {
-		validCheckMoves[king.threateningPieces[0].getCurrentCoordinates()] = true
+		validCheckMoves[king.threateningPieces[0].coord] = true
 	}
-	checkPieceType := king.threateningPieces[0].getPieceType()
-	checkPieceCoord := king.threateningPieces[0].getCurrentCoordinates()
+	checkPieceType := king.threateningPieces[0].pieceType
+	checkPieceCoord := king.threateningPieces[0].coord
 	blockingCoordinates := getCheckBlockingCoords(kingCoord, checkPieceCoord, validMoves, checkPieceType)
 	for i := 0; i < len(blockingCoordinates); i++ {
 		validCheckMoves[blockingCoordinates[i]] = true

@@ -8,6 +8,11 @@ type Pawn struct {
 	hasMoved          bool
 }
 
+// Sets hasMoved property in Pawn struct. Used for cloning
+func (pawn *Pawn) setHasMoved(hasMoved bool) {
+	pawn.hasMoved = hasMoved
+}
+
 func (pawn *Pawn) getCurrentCoordinates() Coordinate {
 	return pawn.currentCoordinate
 }
@@ -53,7 +58,7 @@ func getAllPawnMoves(board *ChessBoard, pawn ChessPiece) map[Coordinate]bool {
 	if wasLastMove == false {
 		return validMoves
 	}
-	if lastMove.piece.getPieceType() == PAWN && AbsIntVal(lastMove.fromCoordinate.Row-lastMove.toCoordinate.Row) == 2 && lastMove.toCoordinate.Row == coords.Row {
+	if lastMove.pieceType == PAWN && AbsIntVal(lastMove.fromCoordinate.Row-lastMove.toCoordinate.Row) == 2 && lastMove.toCoordinate.Row == coords.Row {
 		if lastMove.fromCoordinate.Column-coords.Column == -1 {
 			lowerColEnPassant := Coordinate{Row: coords.Row + moveChange, Column: coords.Column - 1}
 			validMoves[lowerColEnPassant] = true

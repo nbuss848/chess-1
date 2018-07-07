@@ -79,7 +79,7 @@ func TestPawnMovesEnPassant(t *testing.T) {
 	board.BoardPieces[4][4] = &pawn
 	enemyPawn := newPawn(BLACK, Coordinate{4, 5})
 	board.BoardPieces[4][5] = &enemyPawn
-	board.MoveLog = append(board.MoveLog, Move{Coordinate{6, 5}, Coordinate{4, 5}, false, &enemyPawn})
+	board.MoveLog = append(board.MoveLog, Move{Coordinate{6, 5}, Coordinate{4, 5}, false, PAWN})
 	moves := pawn.validMoves(&board)
 	if len(moves) != 2 {
 		t.Fatalf("Expected 2 moves, got %d instead", len(moves))

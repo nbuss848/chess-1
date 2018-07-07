@@ -8,6 +8,11 @@ type Knight struct {
 	hasMoved          bool
 }
 
+// Sets hasMoved property in Knight struct. Used for cloning
+func (knight *Knight) setHasMoved(hasMoved bool) {
+	knight.hasMoved = hasMoved
+}
+
 func (knight *Knight) getCurrentCoordinates() Coordinate {
 	return knight.currentCoordinate
 }

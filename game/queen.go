@@ -8,6 +8,11 @@ type Queen struct {
 	hasMoved          bool
 }
 
+// Sets hasMoved property in Queen struct. Used for cloning
+func (queen *Queen) setHasMoved(hasMoved bool) {
+	queen.hasMoved = hasMoved
+}
+
 func (queen *Queen) getCurrentCoordinates() Coordinate {
 	return queen.currentCoordinate
 }

@@ -138,7 +138,7 @@ func TestMoveCapturesThreateningPiece(t *testing.T) {
 	enemyQueen := newQueen(WHITE, Coordinate{6, 4})
 	board.BoardPieces[6][4] = &enemyQueen
 	board.BlackKing.inCheck = true
-	board.BlackKing.threateningPieces = []ChessPiece{&enemyQueen}
+	board.BlackKing.threateningPieces = []ThreateningPiece{ThreateningPiece{enemyQueen.currentCoordinate, enemyQueen.getPieceType()}}
 	knight := newKnight(BLACK, Coordinate{7, 2})
 	board.BoardPieces[4][3] = &knight
 	moves := knight.validMoves(&board)
@@ -157,7 +157,7 @@ func TestMoveBlocksThreateningPiece(t *testing.T) {
 	enemyQueen := newQueen(WHITE, Coordinate{5, 4})
 	board.BoardPieces[6][4] = &enemyQueen
 	board.BlackKing.inCheck = true
-	board.BlackKing.threateningPieces = []ChessPiece{&enemyQueen}
+	board.BlackKing.threateningPieces = []ThreateningPiece{ThreateningPiece{enemyQueen.currentCoordinate, enemyQueen.getPieceType()}}
 	rook := newRook(BLACK, Coordinate{6, 7})
 	board.BoardPieces[6][7] = &rook
 	moves := rook.validMoves(&board)
@@ -184,7 +184,7 @@ func TestMovesKingThreatenedByMultiplePieces(t *testing.T) {
 	board.BoardPieces[7][4] = board.BlackKing
 	enemyKnight := newKnight(WHITE, Coordinate{5, 5})
 	board.BlackKing.inCheck = true
-	board.BlackKing.threateningPieces = []ChessPiece{&enemyQueen, &enemyKnight}
+	board.BlackKing.threateningPieces = []ThreateningPiece{ThreateningPiece{enemyQueen.currentCoordinate, enemyQueen.getPieceType()}, ThreateningPiece{enemyKnight.currentCoordinate, enemyKnight.getPieceType()}}
 	queen := newQueen(BLACK, Coordinate{6, 5})
 	board.BoardPieces[6][5] = &queen
 	moves := queen.validMoves(&board)

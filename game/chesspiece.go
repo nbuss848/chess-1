@@ -13,6 +13,13 @@ type ChessPiece interface {
 	getPieceType() PieceType
 	hasPieceMoved() bool
 	getCurrentCoordinates() Coordinate
+	setHasMoved(hasMoved bool)
+}
+
+// Interface representation of piece that is threatening a King
+type ThreateningPiece struct {
+	coord     Coordinate
+	pieceType PieceType
 }
 
 type Side int

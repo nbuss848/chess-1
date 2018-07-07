@@ -8,6 +8,11 @@ type Bishop struct {
 	hasMoved          bool
 }
 
+// Sets hasMoved property in Bishop struct. Used for cloning
+func (bishop *Bishop) setHasMoved(hasMoved bool) {
+	bishop.hasMoved = hasMoved
+}
+
 func (bishop *Bishop) getCurrentCoordinates() Coordinate {
 	return bishop.currentCoordinate
 }

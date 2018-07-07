@@ -22,7 +22,9 @@ const (
 
 // Chess player interface - given board, takes turn, and returns outcome of that turn.
 type ChessPlayer interface {
-	TakeTurn(board *ChessBoard) TurnOutcome
+	MakeMove(boardClone ChessBoard, validMoves map[Coordinate]map[Coordinate]bool) (Coordinate, Coordinate)
+	PromotePawn() PieceType
+	GetSide() Side
 }
 
 // Chess game, has player who plays on white side (moves first) and player who plays on black side (moves second)
@@ -39,16 +41,16 @@ func NewChessGame(whitePlayer ChessPlayer, blackPlayer ChessPlayer) ChessGame {
 	return ChessGame{whitePlayer, blackPlayer, &board}
 }
 
-// Loops infinitely, having players take turn at each pass, until outcome returned by each turn isn't CONTINUE
+// Loops infinitely, having players take turn at each pass, until outcome returned isn't CONTINUE
 func (game ChessGame) PlayGame() GameOutcome {
 	var whiteTurn TurnOutcome
 	var blackTurn TurnOutcome
 	for {
-		whiteTurn = game.WhitePlayer.TakeTurn(game.Board)
+		whiteTurn = game.Board.TakeTurn(game.WhitePlayer)
 		if whiteTurn != CONTINUE {
 			break
 		}
-		blackTurn = game.BlackPlayer.TakeTurn(game.Board)
+		blackTurn = game.Board.TakeTurn(game.BlackPlayer)
 		if blackTurn != CONTINUE {
 			break
 		}

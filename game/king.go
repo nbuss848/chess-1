@@ -8,7 +8,12 @@ type King struct {
 	pieceSide         Side
 	inCheck           bool
 	hasMoved          bool
-	threateningPieces []ChessPiece
+	threateningPieces []ThreateningPiece
+}
+
+// Sets hasMoved property in king struct. Used for cloning
+func (king *King) setHasMoved(hasMoved bool) {
+	king.hasMoved = hasMoved
 }
 
 // Returns King's current coordinate
@@ -328,10 +333,10 @@ func (king *King) updateKingStatus(board *ChessBoard) {
 		return
 	}
 	king.inCheck = true
-	var threateningPieces []ChessPiece
+	var threateningPieces []ThreateningPiece
 	for i := 0; i < len(threateningCoords); i++ {
 		coord := threateningCoords[i]
-		threateningPieces = append(threateningPieces, board.BoardPieces[coord.Row][coord.Column])
+		threateningPieces = append(threateningPieces, ThreateningPiece{coord, board.BoardPieces[coord.Row][coord.Column].getPieceType()})
 	}
 	king.threateningPieces = threateningPieces
 }
