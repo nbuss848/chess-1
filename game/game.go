@@ -41,7 +41,7 @@ func NewChessGame(whitePlayer ChessPlayer, blackPlayer ChessPlayer) ChessGame {
 	return ChessGame{whitePlayer, blackPlayer, &board}
 }
 
-// Loops infinitely, having players take turn at each pass, until outcome returned isn't CONTINUE
+// has each player take a turn until outcome from turn isn't CONTINUE
 func (game ChessGame) PlayGame() GameOutcome {
 	var whiteTurn TurnOutcome
 	var blackTurn TurnOutcome
