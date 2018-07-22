@@ -9,8 +9,8 @@ type Coordinate struct {
 type ChessPiece interface {
 	validMoves(board *ChessBoard) map[Coordinate]bool
 	updatePosition(coord Coordinate)
-	getPieceSide() Side
-	getPieceType() PieceType
+	GetPieceSide() Side
+	GetPieceType() PieceType
 	hasPieceMoved() bool
 	getCurrentCoordinates() Coordinate
 	setHasMoved(hasMoved bool)

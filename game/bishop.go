@@ -32,18 +32,18 @@ func (bishop *Bishop) validMoves(board *ChessBoard) map[Coordinate]bool {
 
 func getAllBishopMoves(board *ChessBoard, bishop ChessPiece) map[Coordinate]bool {
 	validMoves := make(map[Coordinate]bool)
-	allMoves := getAllDiagonalMoves(bishop.getCurrentCoordinates(), board, bishop.getPieceSide())
+	allMoves := getAllDiagonalMoves(bishop.getCurrentCoordinates(), board, bishop.GetPieceSide())
 	for i := 0; i < len(allMoves); i++ {
 		validMoves[allMoves[i]] = true
 	}
 	return validMoves
 }
 
-func (bishop *Bishop) getPieceSide() Side {
+func (bishop *Bishop) GetPieceSide() Side {
 	return bishop.pieceSide
 }
 
-func (bishop *Bishop) getPieceType() PieceType {
+func (bishop *Bishop) GetPieceType() PieceType {
 	return BISHOP
 }
 

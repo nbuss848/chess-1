@@ -138,7 +138,7 @@ func TestMoveCapturesThreateningPiece(t *testing.T) {
 	enemyQueen := newQueen(WHITE, Coordinate{6, 4})
 	board.BoardPieces[6][4] = &enemyQueen
 	board.BlackKing.inCheck = true
-	board.BlackKing.threateningPieces = []ThreateningPiece{ThreateningPiece{enemyQueen.currentCoordinate, enemyQueen.getPieceType()}}
+	board.BlackKing.threateningPieces = []ThreateningPiece{ThreateningPiece{enemyQueen.currentCoordinate, enemyQueen.GetPieceType()}}
 	knight := newKnight(BLACK, Coordinate{7, 2})
 	board.BoardPieces[4][3] = &knight
 	moves := knight.validMoves(&board)
@@ -157,7 +157,7 @@ func TestMoveBlocksThreateningPiece(t *testing.T) {
 	enemyQueen := newQueen(WHITE, Coordinate{5, 4})
 	board.BoardPieces[6][4] = &enemyQueen
 	board.BlackKing.inCheck = true
-	board.BlackKing.threateningPieces = []ThreateningPiece{ThreateningPiece{enemyQueen.currentCoordinate, enemyQueen.getPieceType()}}
+	board.BlackKing.threateningPieces = []ThreateningPiece{ThreateningPiece{enemyQueen.currentCoordinate, enemyQueen.GetPieceType()}}
 	rook := newRook(BLACK, Coordinate{6, 7})
 	board.BoardPieces[6][7] = &rook
 	moves := rook.validMoves(&board)
@@ -184,7 +184,7 @@ func TestMovesKingThreatenedByMultiplePieces(t *testing.T) {
 	board.BoardPieces[7][4] = board.BlackKing
 	enemyKnight := newKnight(WHITE, Coordinate{5, 5})
 	board.BlackKing.inCheck = true
-	board.BlackKing.threateningPieces = []ThreateningPiece{ThreateningPiece{enemyQueen.currentCoordinate, enemyQueen.getPieceType()}, ThreateningPiece{enemyKnight.currentCoordinate, enemyKnight.getPieceType()}}
+	board.BlackKing.threateningPieces = []ThreateningPiece{ThreateningPiece{enemyQueen.currentCoordinate, enemyQueen.GetPieceType()}, ThreateningPiece{enemyKnight.currentCoordinate, enemyKnight.GetPieceType()}}
 	queen := newQueen(BLACK, Coordinate{6, 5})
 	board.BoardPieces[6][5] = &queen
 	moves := queen.validMoves(&board)
@@ -194,5 +194,16 @@ func TestMovesKingThreatenedByMultiplePieces(t *testing.T) {
 	moves = board.BlackKing.validMoves(&board)
 	if len(moves) != 2 {
 		t.Fatalf("Expected 2 valid moves for king, got %d instead", len(moves))
+	}
+}
+
+func TestMovesKingThreatenedByPawn(t *testing.T) {
+	board := CreateBoard()
+	board.BoardPieces[1][3] = nil
+	blackPawn := newPawn(BLACK, Coordinate{1, 4})
+	board.BoardPieces[1][4] = &blackPawn
+	board.WhiteKing.updateKingStatus(&board)
+	if !board.WhiteKing.inCheck {
+		t.Fatalf("King should be in check")
 	}
 }

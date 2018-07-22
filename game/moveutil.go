@@ -62,9 +62,9 @@ func getNextCoordinate(coord Coordinate, rowChange int, colChange int) Coordinat
 func canMoveToSquare(coord Coordinate, board *ChessBoard, side Side) (bool, bool) {
 	if !coord.isLegal() {
 		return false, true
-	} else if board.isSpaceOccupied(coord) && board.getPieceSide(coord) == side {
+	} else if board.isSpaceOccupied(coord) && board.GetPieceSide(coord) == side {
 		return false, true
-	} else if board.isSpaceOccupied(coord) && board.getPieceSide(coord) != side {
+	} else if board.isSpaceOccupied(coord) && board.GetPieceSide(coord) != side {
 		return true, true
 	} else {
 		return true, false
@@ -86,13 +86,13 @@ func AbsIntVal(val int) int {
 
 // Gets all possible moves for piece, taking king's check status and possibility of exposing king into account
 func getAllMovesForPiece(board *ChessBoard, piece ChessPiece, allMoves func(*ChessBoard, ChessPiece) map[Coordinate]bool) map[Coordinate]bool {
-	kingCoord := board.getKingCoordinate(piece.getPieceSide())
-	if willMoveExposeKing(kingCoord, piece.getCurrentCoordinates(), piece.getPieceSide(), board) {
+	kingCoord := board.getKingCoordinate(piece.GetPieceSide())
+	if willMoveExposeKing(kingCoord, piece.getCurrentCoordinates(), piece.GetPieceSide(), board) {
 		return nil
 	}
 	validMoves := allMoves(board, piece)
 	king := board.WhiteKing
-	if piece.getPieceSide() == BLACK {
+	if piece.GetPieceSide() == BLACK {
 		king = board.BlackKing
 	}
 	if !king.inCheck {

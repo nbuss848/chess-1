@@ -79,7 +79,7 @@ func (board *ChessBoard) getAllValidMovesForSide(pieceSide Side) map[Coordinate]
 	for row := 0; row < len(board.BoardPieces); row++ {
 		for col := 0; col < len(board.BoardPieces[row]); col++ {
 			currentCoord := Coordinate{row, col}
-			if board.isSpaceOccupied(currentCoord) && board.getPieceSide(currentCoord) == pieceSide {
+			if board.isSpaceOccupied(currentCoord) && board.GetPieceSide(currentCoord) == pieceSide {
 				pieceMoves := board.BoardPieces[row][col].validMoves(board)
 				if len(pieceMoves) != 0 {
 					moves[currentCoord] = pieceMoves
@@ -92,7 +92,7 @@ func (board *ChessBoard) getAllValidMovesForSide(pieceSide Side) map[Coordinate]
 
 // Given valid move (in form of from Coordinate and to Coordinate) updates board and returns true if pawn needs to be promoted, false otherwise
 func (board *ChessBoard) updateBoard(fromCoord Coordinate, toCoord Coordinate) bool {
-	piece := board.getPieceType(fromCoord)
+	piece := board.GetPieceType(fromCoord)
 	isCapture := false
 	if board.isSpaceOccupied(toCoord) {
 		isCapture = true
@@ -111,10 +111,10 @@ func (board *ChessBoard) updateBoard(fromCoord Coordinate, toCoord Coordinate) b
 		board.BoardPieces[newRookCoord.Row][0] = nil
 		board.BoardPieces[newRookCoord.Row][newRookCoord.Column].updatePosition(newRookCoord)
 	}
-	if piece == KING && fromCoord.Column-toCoord.Column < 1 {
+	if piece == KING && fromCoord.Column-toCoord.Column < -1 {
 		newRookCoord := Coordinate{toCoord.Row, toCoord.Column - 1}
 		board.BoardPieces[newRookCoord.Row][newRookCoord.Column] = board.BoardPieces[newRookCoord.Row][7]
-		board.BoardPieces[newRookCoord.Row][0] = nil
+		board.BoardPieces[newRookCoord.Row][7] = nil
 		board.BoardPieces[newRookCoord.Row][newRookCoord.Column].updatePosition(newRookCoord)
 	}
 	if enPassant {
@@ -123,7 +123,7 @@ func (board *ChessBoard) updateBoard(fromCoord Coordinate, toCoord Coordinate) b
 	if piece == PAWN && (toCoord.Row == 0 || toCoord.Row == 7) {
 		return true
 	}
-	board.MoveLog = append(board.MoveLog, Move{fromCoord, toCoord, isCapture, board.getPieceType(toCoord)})
+	board.MoveLog = append(board.MoveLog, Move{fromCoord, toCoord, isCapture, board.GetPieceType(toCoord)})
 	return false
 }
 
@@ -191,8 +191,8 @@ func deepCopyBoard(board *ChessBoard) ChessBoard {
 				clonedBoardPieces[row][col] = nil
 				continue
 			}
-			pieceType := piece.getPieceType()
-			pieceSide := piece.getPieceSide()
+			pieceType := piece.GetPieceType()
+			pieceSide := piece.GetPieceSide()
 			currentCoord := piece.getCurrentCoordinates()
 			if pieceType == PAWN {
 				pawn := newPawn(pieceSide, currentCoord)
@@ -269,13 +269,13 @@ func (board *ChessBoard) isSpaceOccupied(coord Coordinate) bool {
 }
 
 // Gets type of piece occupying given coordinate
-func (board *ChessBoard) getPieceType(coord Coordinate) PieceType {
-	return board.BoardPieces[coord.Row][coord.Column].getPieceType()
+func (board *ChessBoard) GetPieceType(coord Coordinate) PieceType {
+	return board.BoardPieces[coord.Row][coord.Column].GetPieceType()
 }
 
 // Gets side of piece occupying given coordinate
-func (board *ChessBoard) getPieceSide(coord Coordinate) Side {
-	return board.BoardPieces[coord.Row][coord.Column].getPieceSide()
+func (board *ChessBoard) GetPieceSide(coord Coordinate) Side {
+	return board.BoardPieces[coord.Row][coord.Column].GetPieceSide()
 }
 
 // Gets previous move on board

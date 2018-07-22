@@ -32,7 +32,7 @@ func (rook *Rook) validMoves(board *ChessBoard) map[Coordinate]bool {
 }
 
 func getAllRookMoves(board *ChessBoard, rook ChessPiece) map[Coordinate]bool {
-	allMovesSlice := getAllStraightLineMoves(rook.getCurrentCoordinates(), board, rook.getPieceSide())
+	allMovesSlice := getAllStraightLineMoves(rook.getCurrentCoordinates(), board, rook.GetPieceSide())
 	moveMap := make(map[Coordinate]bool)
 	for i := 0; i < len(allMovesSlice); i++ {
 		moveMap[allMovesSlice[i]] = true
@@ -40,11 +40,11 @@ func getAllRookMoves(board *ChessBoard, rook ChessPiece) map[Coordinate]bool {
 	return moveMap
 }
 
-func (rook *Rook) getPieceSide() Side {
+func (rook *Rook) GetPieceSide() Side {
 	return rook.pieceSide
 }
 
-func (rook *Rook) getPieceType() PieceType {
+func (rook *Rook) GetPieceType() PieceType {
 	return ROOK
 }
 

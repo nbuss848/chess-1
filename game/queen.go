@@ -32,22 +32,22 @@ func (queen *Queen) validMoves(board *ChessBoard) map[Coordinate]bool {
 
 func getAllQueenMoves(board *ChessBoard, queen ChessPiece) map[Coordinate]bool {
 	validMoves := make(map[Coordinate]bool)
-	allStraightLineMoves := getAllStraightLineMoves(queen.getCurrentCoordinates(), board, queen.getPieceSide())
+	allStraightLineMoves := getAllStraightLineMoves(queen.getCurrentCoordinates(), board, queen.GetPieceSide())
 	for i := 0; i < len(allStraightLineMoves); i++ {
 		validMoves[allStraightLineMoves[i]] = true
 	}
-	allDiagonalMoves := getAllDiagonalMoves(queen.getCurrentCoordinates(), board, queen.getPieceSide())
+	allDiagonalMoves := getAllDiagonalMoves(queen.getCurrentCoordinates(), board, queen.GetPieceSide())
 	for i := 0; i < len(allDiagonalMoves); i++ {
 		validMoves[allDiagonalMoves[i]] = true
 	}
 	return validMoves
 }
 
-func (queen *Queen) getPieceSide() Side {
+func (queen *Queen) GetPieceSide() Side {
 	return queen.pieceSide
 }
 
-func (queen *Queen) getPieceType() PieceType {
+func (queen *Queen) GetPieceType() PieceType {
 	return QUEEN
 }
 

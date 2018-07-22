@@ -41,11 +41,14 @@ func (king *King) hasPieceMoved() bool {
 func (king *King) validMoves(board *ChessBoard) map[Coordinate]bool {
 	validMoves := make(map[Coordinate]bool)
 	potentialCoordinates := getSurroundingCoordinates(king.currentCoordinate)
+	// temporarily set current king space to nil, to simulate board if king were to move
+	board.BoardPieces[king.currentCoordinate.Row][king.currentCoordinate.Column] = nil
 	for i := 0; i < len(potentialCoordinates); i++ {
 		if potentialCoordinates[i].isLegal() && !isSpaceOccupiedBySameSidePiece(potentialCoordinates[i], board, king.pieceSide) && !willKingMoveLeadToCheck(potentialCoordinates[i], board, king.pieceSide) {
 			validMoves[potentialCoordinates[i]] = true
 		}
 	}
+	board.BoardPieces[king.currentCoordinate.Row][king.currentCoordinate.Column] = king
 	if king.canCastle(board, true) {
 		validMoves[getCastleCoordinate(king.currentCoordinate, true)] = true
 	}
@@ -60,25 +63,28 @@ func isSpaceOccupiedBySameSidePiece(coord Coordinate, board *ChessBoard, pieceSi
 	if !board.isSpaceOccupied(coord) {
 		return false
 	}
-	if board.getPieceSide(coord) != pieceSide {
+	if board.GetPieceSide(coord) != pieceSide {
 		return false
 	}
 	return true
 }
 
 // Return's king's piece type
-func (king *King) getPieceType() PieceType {
+func (king *King) GetPieceType() PieceType {
 	return KING
 }
 
 // Returns king's piece side
-func (king *King) getPieceSide() Side {
+func (king *King) GetPieceSide() Side {
 	return king.pieceSide
 }
 
-// Returns if king can castle
+// Returns boolean for whether king can castle
 func (king *King) canCastle(board *ChessBoard, castleLeft bool) bool {
 	if king.hasMoved {
+		return false
+	}
+	if king.inCheck {
 		return false
 	}
 	changeVal := 1
@@ -97,7 +103,7 @@ func (king *King) canCastle(board *ChessBoard, castleLeft bool) bool {
 		if newCoord.Column == boardEdge && !board.isSpaceOccupied(newCoord) {
 			return false
 		}
-		if newCoord.Column == boardEdge && (board.getPieceType(newCoord) == ROOK && board.getPieceSide(newCoord) == king.pieceSide) {
+		if newCoord.Column == boardEdge && (board.GetPieceType(newCoord) == ROOK && board.GetPieceSide(newCoord) == king.pieceSide && !board.BoardPieces[newCoord.Row][newCoord.Column].hasPieceMoved()) {
 			return true
 		}
 		newCoord.Column += changeVal
@@ -108,9 +114,9 @@ func (king *King) canCastle(board *ChessBoard, castleLeft bool) bool {
 // Gets coordinate King would move to if a castle took place
 func getCastleCoordinate(coord Coordinate, castleLeft bool) Coordinate {
 	if castleLeft {
-		return Coordinate{Row: coord.Row, Column: coord.Column + 2}
-	} else {
 		return Coordinate{Row: coord.Row, Column: coord.Column - 2}
+	} else {
+		return Coordinate{Row: coord.Row, Column: coord.Column + 2}
 	}
 }
 
@@ -139,9 +145,9 @@ func threateningPawnCoordinates(coord Coordinate, board *ChessBoard, pieceSide S
 	var threateningCoordinates []Coordinate
 	firstPawnCol := coord.Column + 1
 	secondPawnCol := coord.Column - 1
-	threateningRow := coord.Row - 1
+	threateningRow := coord.Row + 1
 	if pieceSide == BLACK {
-		threateningRow = coord.Row - 2
+		threateningRow = coord.Row - 1
 	}
 	firstPawnCoord := Coordinate{Row: threateningRow, Column: firstPawnCol}
 	secondPawnCoord := Coordinate{Row: threateningRow, Column: secondPawnCol}
@@ -221,10 +227,10 @@ func isSpaceThreatenedAcrossLine(coord Coordinate, board *ChessBoard, pieceSide 
 		if !board.isSpaceOccupied(coord) {
 			return false, false
 		}
-		if board.getPieceSide(coord) == pieceSide {
+		if board.GetPieceSide(coord) == pieceSide {
 			return false, true
 		}
-		coordPieceType := board.getPieceType(coord)
+		coordPieceType := board.GetPieceType(coord)
 		if coordPieceType != pieceType && coordPieceType != QUEEN {
 			return false, true
 		}
@@ -240,10 +246,10 @@ func canCoordinateThreaten(board *ChessBoard, coord Coordinate, pieceSide Side, 
 	if !board.isSpaceOccupied(coord) {
 		return false
 	}
-	if board.getPieceSide(coord) == pieceSide {
+	if board.GetPieceSide(coord) == pieceSide {
 		return false
 	}
-	if board.getPieceType(coord) != pieceType {
+	if board.GetPieceType(coord) != pieceType {
 		return false
 	}
 	return true
@@ -309,10 +315,10 @@ func doesPathContainThreat(board *ChessBoard, kingCoord Coordinate, pieceToMoveC
 		if !pastPieceToMove {
 			return false
 		}
-		if pastPieceToMove && board.getPieceSide(currentCoord) == pieceSide {
+		if pastPieceToMove && board.GetPieceSide(currentCoord) == pieceSide {
 			return false
 		}
-		currentCoordPieceType := board.getPieceType(currentCoord)
+		currentCoordPieceType := board.GetPieceType(currentCoord)
 		if currentCoordPieceType == QUEEN || currentCoordPieceType == rookOrBishopThreat {
 			return true
 		}
@@ -336,7 +342,7 @@ func (king *King) updateKingStatus(board *ChessBoard) {
 	var threateningPieces []ThreateningPiece
 	for i := 0; i < len(threateningCoords); i++ {
 		coord := threateningCoords[i]
-		threateningPieces = append(threateningPieces, ThreateningPiece{coord, board.BoardPieces[coord.Row][coord.Column].getPieceType()})
+		threateningPieces = append(threateningPieces, ThreateningPiece{coord, board.BoardPieces[coord.Row][coord.Column].GetPieceType()})
 	}
 	king.threateningPieces = threateningPieces
 }

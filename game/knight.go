@@ -34,7 +34,7 @@ func getAllKnightMoves(board *ChessBoard, knight ChessPiece) map[Coordinate]bool
 	validMoves := make(map[Coordinate]bool)
 	allPotentialCoordinates := getAllPossibleKnightMoves(knight.getCurrentCoordinates())
 	for i := 0; i < len(allPotentialCoordinates); i++ {
-		canMove, _ := canMoveToSquare(allPotentialCoordinates[i], board, knight.getPieceSide())
+		canMove, _ := canMoveToSquare(allPotentialCoordinates[i], board, knight.GetPieceSide())
 		if canMove {
 			validMoves[allPotentialCoordinates[i]] = true
 		}
@@ -55,11 +55,11 @@ func getAllPossibleKnightMoves(coord Coordinate) []Coordinate {
 	return coordinates
 }
 
-func (knight *Knight) getPieceSide() Side {
+func (knight *Knight) GetPieceSide() Side {
 	return knight.pieceSide
 }
 
-func (knight *Knight) getPieceType() PieceType {
+func (knight *Knight) GetPieceType() PieceType {
 	return KNIGHT
 }
 

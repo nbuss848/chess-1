@@ -33,7 +33,7 @@ func (pawn *Pawn) validMoves(board *ChessBoard) map[Coordinate]bool {
 func getAllPawnMoves(board *ChessBoard, pawn ChessPiece) map[Coordinate]bool {
 	validMoves := make(map[Coordinate]bool)
 	coords := pawn.getCurrentCoordinates()
-	pieceSide := pawn.getPieceSide()
+	pieceSide := pawn.GetPieceSide()
 	moveChange := 1
 	if pieceSide == BLACK {
 		moveChange = -1
@@ -43,7 +43,7 @@ func getAllPawnMoves(board *ChessBoard, pawn ChessPiece) map[Coordinate]bool {
 		validMoves[oneMovePotentialCoordinate] = true
 	}
 	twoMovePotentialCoordinate := Coordinate{Row: oneMovePotentialCoordinate.Row + moveChange, Column: oneMovePotentialCoordinate.Column}
-	if !pawn.hasPieceMoved() && !board.isSpaceOccupied((twoMovePotentialCoordinate)) {
+	if !pawn.hasPieceMoved() && !board.isSpaceOccupied((twoMovePotentialCoordinate)) && !board.isSpaceOccupied(oneMovePotentialCoordinate) {
 		validMoves[twoMovePotentialCoordinate] = true
 	}
 	firstCaptureMove := Coordinate{Row: oneMovePotentialCoordinate.Row, Column: oneMovePotentialCoordinate.Column + 1}
@@ -70,11 +70,11 @@ func getAllPawnMoves(board *ChessBoard, pawn ChessPiece) map[Coordinate]bool {
 	return validMoves
 }
 
-func (pawn *Pawn) getPieceSide() Side {
+func (pawn *Pawn) GetPieceSide() Side {
 	return pawn.pieceSide
 }
 
-func (pawn *Pawn) getPieceType() PieceType {
+func (pawn *Pawn) GetPieceType() PieceType {
 	return PAWN
 }
 
@@ -89,7 +89,7 @@ func validateCaptureMove(board *ChessBoard, coord Coordinate, pieceSide Side, le
 	if !board.isSpaceOccupied(coord) {
 		return false
 	}
-	if board.getPieceSide(coord) == pieceSide {
+	if board.GetPieceSide(coord) == pieceSide {
 		return false
 	}
 	return true
