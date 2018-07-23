@@ -16,6 +16,10 @@ const (
 	EXPERT
 )
 
+func MakeEvaluatedMove(side chessgame.Side, board *chessgame.ChessBoard, validMoves map[chessgame.Coordinate]map[chessgame.Coordinate]bool) (chessgame.Coordinate, chessgame.Coordinate) {
+	return selectBestMove(side, board, validMoves)
+}
+
 func MakeRandomMove(validMoves map[chessgame.Coordinate]map[chessgame.Coordinate]bool) (chessgame.Coordinate, chessgame.Coordinate) {
 	randNum := rand.Intn(len(validMoves))
 	counter := 0

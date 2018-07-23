@@ -14,7 +14,7 @@ func (rook *Rook) setHasMoved(hasMoved bool) {
 	rook.hasMoved = hasMoved
 }
 
-func (rook *Rook) getCurrentCoordinates() Coordinate {
+func (rook *Rook) GetCurrentCoordinates() Coordinate {
 	return rook.currentCoordinate
 }
 
@@ -27,12 +27,12 @@ func (rook *Rook) updatePosition(coord Coordinate) {
 	rook.hasMoved = true
 }
 
-func (rook *Rook) validMoves(board *ChessBoard) map[Coordinate]bool {
+func (rook *Rook) ValidMoves(board *ChessBoard) map[Coordinate]bool {
 	return getAllMovesForPiece(board, rook, getAllRookMoves)
 }
 
 func getAllRookMoves(board *ChessBoard, rook ChessPiece) map[Coordinate]bool {
-	allMovesSlice := getAllStraightLineMoves(rook.getCurrentCoordinates(), board, rook.GetPieceSide())
+	allMovesSlice := getAllStraightLineMoves(rook.GetCurrentCoordinates(), board, rook.GetPieceSide())
 	moveMap := make(map[Coordinate]bool)
 	for i := 0; i < len(allMovesSlice); i++ {
 		moveMap[allMovesSlice[i]] = true

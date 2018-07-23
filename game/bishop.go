@@ -13,7 +13,7 @@ func (bishop *Bishop) setHasMoved(hasMoved bool) {
 	bishop.hasMoved = hasMoved
 }
 
-func (bishop *Bishop) getCurrentCoordinates() Coordinate {
+func (bishop *Bishop) GetCurrentCoordinates() Coordinate {
 	return bishop.currentCoordinate
 }
 
@@ -26,13 +26,13 @@ func (bishop *Bishop) updatePosition(coord Coordinate) {
 	bishop.hasMoved = true
 }
 
-func (bishop *Bishop) validMoves(board *ChessBoard) map[Coordinate]bool {
+func (bishop *Bishop) ValidMoves(board *ChessBoard) map[Coordinate]bool {
 	return getAllMovesForPiece(board, bishop, getAllBishopMoves)
 }
 
 func getAllBishopMoves(board *ChessBoard, bishop ChessPiece) map[Coordinate]bool {
 	validMoves := make(map[Coordinate]bool)
-	allMoves := getAllDiagonalMoves(bishop.getCurrentCoordinates(), board, bishop.GetPieceSide())
+	allMoves := getAllDiagonalMoves(bishop.GetCurrentCoordinates(), board, bishop.GetPieceSide())
 	for i := 0; i < len(allMoves); i++ {
 		validMoves[allMoves[i]] = true
 	}

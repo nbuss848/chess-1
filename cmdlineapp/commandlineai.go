@@ -21,7 +21,7 @@ func (ai CommandLineAI) MakeMove(boardClone chessgame.ChessBoard, validMoves map
 	duration := time.Second
 	time.Sleep(duration)
 	fmt.Println("\n")
-	return chessengine.MakeRandomMove(validMoves)
+	return chessengine.MakeEvaluatedMove(ai.GetSide(), &boardClone, validMoves)
 }
 
 func (ai CommandLineAI) PromotePawn() chessgame.PieceType {

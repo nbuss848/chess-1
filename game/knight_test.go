@@ -9,7 +9,7 @@ func TestKnightMovesEdge(t *testing.T) {
 	board := createEmptyBoard()
 	knight := newKnight(BLACK, Coordinate{0, 4})
 	board.BoardPieces[0][4] = &knight
-	moves := knight.validMoves(&board)
+	moves := knight.ValidMoves(&board)
 	if len(moves) != 4 {
 		t.Fatalf("Expected 4 moves, got %d instead", len(moves))
 	}
@@ -19,7 +19,7 @@ func TestKnightMovesMiddle(t *testing.T) {
 	board := createEmptyBoard()
 	knight := newKnight(BLACK, Coordinate{4, 4})
 	board.BoardPieces[4][4] = &knight
-	moves := knight.validMoves(&board)
+	moves := knight.ValidMoves(&board)
 	if len(moves) != 8 {
 		t.Fatalf("Expected 8 moves, got %d instead", len(moves))
 	}
@@ -31,7 +31,7 @@ func TestKnightMovesMiddleCapture(t *testing.T) {
 	board.BoardPieces[4][4] = &knight
 	bishopToCapture := newBishop(WHITE, Coordinate{2, 3})
 	board.BoardPieces[2][3] = &bishopToCapture
-	moves := knight.validMoves(&board)
+	moves := knight.ValidMoves(&board)
 	if len(moves) != 8 {
 		t.Fatalf("Expected 8 moves, got %d instead", len(moves))
 	}
@@ -48,7 +48,7 @@ func TestKnightMovesBlockedMove(t *testing.T) {
 	board.BoardPieces[4][4] = &knight
 	friendlyBishop := newBishop(BLACK, Coordinate{2, 3})
 	board.BoardPieces[2][3] = &friendlyBishop
-	moves := knight.validMoves(&board)
+	moves := knight.ValidMoves(&board)
 	if len(moves) != 7 {
 		t.Fatalf("Expected 7 moves, got %d instead", len(moves))
 	}

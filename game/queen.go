@@ -13,7 +13,7 @@ func (queen *Queen) setHasMoved(hasMoved bool) {
 	queen.hasMoved = hasMoved
 }
 
-func (queen *Queen) getCurrentCoordinates() Coordinate {
+func (queen *Queen) GetCurrentCoordinates() Coordinate {
 	return queen.currentCoordinate
 }
 
@@ -26,17 +26,17 @@ func (queen *Queen) updatePosition(coord Coordinate) {
 	queen.hasMoved = true
 }
 
-func (queen *Queen) validMoves(board *ChessBoard) map[Coordinate]bool {
+func (queen *Queen) ValidMoves(board *ChessBoard) map[Coordinate]bool {
 	return getAllMovesForPiece(board, queen, getAllQueenMoves)
 }
 
 func getAllQueenMoves(board *ChessBoard, queen ChessPiece) map[Coordinate]bool {
 	validMoves := make(map[Coordinate]bool)
-	allStraightLineMoves := getAllStraightLineMoves(queen.getCurrentCoordinates(), board, queen.GetPieceSide())
+	allStraightLineMoves := getAllStraightLineMoves(queen.GetCurrentCoordinates(), board, queen.GetPieceSide())
 	for i := 0; i < len(allStraightLineMoves); i++ {
 		validMoves[allStraightLineMoves[i]] = true
 	}
-	allDiagonalMoves := getAllDiagonalMoves(queen.getCurrentCoordinates(), board, queen.GetPieceSide())
+	allDiagonalMoves := getAllDiagonalMoves(queen.GetCurrentCoordinates(), board, queen.GetPieceSide())
 	for i := 0; i < len(allDiagonalMoves); i++ {
 		validMoves[allDiagonalMoves[i]] = true
 	}

@@ -87,10 +87,18 @@ func AbsIntVal(val int) int {
 // Gets all possible moves for piece, taking king's check status and possibility of exposing king into account
 func getAllMovesForPiece(board *ChessBoard, piece ChessPiece, allMoves func(*ChessBoard, ChessPiece) map[Coordinate]bool) map[Coordinate]bool {
 	kingCoord := board.getKingCoordinate(piece.GetPieceSide())
-	if willMoveExposeKing(kingCoord, piece.getCurrentCoordinates(), piece.GetPieceSide(), board) {
+	threatCoord, willExpose := willMoveExposeKing(kingCoord, piece.GetCurrentCoordinates(), piece.GetPieceSide(), board)
+	validMoves := allMoves(board, piece)
+	if willExpose {
+		_, contains := validMoves[threatCoord]
+		if contains {
+			return map[Coordinate]bool{threatCoord: true}
+		}
 		return nil
 	}
-	validMoves := allMoves(board, piece)
+	if willExpose {
+		return nil
+	}
 	king := board.WhiteKing
 	if piece.GetPieceSide() == BLACK {
 		king = board.BlackKing

@@ -13,7 +13,7 @@ func (pawn *Pawn) setHasMoved(hasMoved bool) {
 	pawn.hasMoved = hasMoved
 }
 
-func (pawn *Pawn) getCurrentCoordinates() Coordinate {
+func (pawn *Pawn) GetCurrentCoordinates() Coordinate {
 	return pawn.currentCoordinate
 }
 
@@ -26,13 +26,13 @@ func (pawn *Pawn) updatePosition(coord Coordinate) {
 	pawn.hasMoved = true
 }
 
-func (pawn *Pawn) validMoves(board *ChessBoard) map[Coordinate]bool {
+func (pawn *Pawn) ValidMoves(board *ChessBoard) map[Coordinate]bool {
 	return getAllMovesForPiece(board, pawn, getAllPawnMoves)
 }
 
 func getAllPawnMoves(board *ChessBoard, pawn ChessPiece) map[Coordinate]bool {
 	validMoves := make(map[Coordinate]bool)
-	coords := pawn.getCurrentCoordinates()
+	coords := pawn.GetCurrentCoordinates()
 	pieceSide := pawn.GetPieceSide()
 	moveChange := 1
 	if pieceSide == BLACK {
