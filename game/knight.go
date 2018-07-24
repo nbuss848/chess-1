@@ -13,7 +13,7 @@ func (knight *Knight) setHasMoved(hasMoved bool) {
 	knight.hasMoved = hasMoved
 }
 
-func (knight *Knight) getCurrentCoordinates() Coordinate {
+func (knight *Knight) GetCurrentCoordinates() Coordinate {
 	return knight.currentCoordinate
 }
 
@@ -26,13 +26,13 @@ func (knight *Knight) updatePosition(coord Coordinate) {
 	knight.hasMoved = true
 }
 
-func (knight *Knight) validMoves(board *ChessBoard) map[Coordinate]bool {
+func (knight *Knight) ValidMoves(board *ChessBoard) map[Coordinate]bool {
 	return getAllMovesForPiece(board, knight, getAllKnightMoves)
 }
 
 func getAllKnightMoves(board *ChessBoard, knight ChessPiece) map[Coordinate]bool {
 	validMoves := make(map[Coordinate]bool)
-	allPotentialCoordinates := getAllPossibleKnightMoves(knight.getCurrentCoordinates())
+	allPotentialCoordinates := getAllPossibleKnightMoves(knight.GetCurrentCoordinates())
 	for i := 0; i < len(allPotentialCoordinates); i++ {
 		canMove, _ := canMoveToSquare(allPotentialCoordinates[i], board, knight.GetPieceSide())
 		if canMove {

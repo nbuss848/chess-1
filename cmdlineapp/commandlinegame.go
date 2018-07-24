@@ -22,6 +22,9 @@ func main() {
 	aiPlayer := NewCommandLineAI(aiSide)
 	humanPlayer := CommandLinePlayer{humanSide}
 	game := chessgame.NewChessGame(aiPlayer, humanPlayer)
+	if aiPlayer.GetSide() == chessgame.BLACK {
+		game = chessgame.NewChessGame(humanPlayer, aiPlayer)
+	}
 	outCome := game.PlayGame()
 	PrintBoard(*game.Board, humanPlayer.GetSide())
 	if outCome == chessgame.WHITEVICTORY {

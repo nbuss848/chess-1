@@ -53,7 +53,7 @@ func (board *ChessBoard) TakeTurn(player ChessPlayer) TurnOutcome {
 			_, toOk = validMoves[toCoord]
 		}
 	}
-	promotePawn := board.updateBoard(fromCoord, toCoord)
+	promotePawn := board.UpdateBoard(fromCoord, toCoord)
 	// Update side's king to not be in check, since move validation wouldn't allow king to still be in check if it were before
 	if side == WHITE {
 		board.WhiteKing.inCheck = false
@@ -80,7 +80,7 @@ func (board *ChessBoard) getAllValidMovesForSide(pieceSide Side) map[Coordinate]
 		for col := 0; col < len(board.BoardPieces[row]); col++ {
 			currentCoord := Coordinate{row, col}
 			if board.isSpaceOccupied(currentCoord) && board.GetPieceSide(currentCoord) == pieceSide {
-				pieceMoves := board.BoardPieces[row][col].validMoves(board)
+				pieceMoves := board.BoardPieces[row][col].ValidMoves(board)
 				if len(pieceMoves) != 0 {
 					moves[currentCoord] = pieceMoves
 				}
@@ -91,7 +91,7 @@ func (board *ChessBoard) getAllValidMovesForSide(pieceSide Side) map[Coordinate]
 }
 
 // Given valid move (in form of from Coordinate and to Coordinate) updates board and returns true if pawn needs to be promoted, false otherwise
-func (board *ChessBoard) updateBoard(fromCoord Coordinate, toCoord Coordinate) bool {
+func (board *ChessBoard) UpdateBoard(fromCoord Coordinate, toCoord Coordinate) bool {
 	piece := board.GetPieceType(fromCoord)
 	isCapture := false
 	if board.isSpaceOccupied(toCoord) {
@@ -193,7 +193,7 @@ func deepCopyBoard(board *ChessBoard) ChessBoard {
 			}
 			pieceType := piece.GetPieceType()
 			pieceSide := piece.GetPieceSide()
-			currentCoord := piece.getCurrentCoordinates()
+			currentCoord := piece.GetCurrentCoordinates()
 			if pieceType == PAWN {
 				pawn := newPawn(pieceSide, currentCoord)
 				clonedPiece = &pawn

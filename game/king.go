@@ -17,7 +17,7 @@ func (king *King) setHasMoved(hasMoved bool) {
 }
 
 // Returns King's current coordinate
-func (king *King) getCurrentCoordinates() Coordinate {
+func (king *King) GetCurrentCoordinates() Coordinate {
 	return king.currentCoordinate
 }
 
@@ -38,7 +38,7 @@ func (king *King) hasPieceMoved() bool {
 }
 
 // Gets all valid moves for King
-func (king *King) validMoves(board *ChessBoard) map[Coordinate]bool {
+func (king *King) ValidMoves(board *ChessBoard) map[Coordinate]bool {
 	validMoves := make(map[Coordinate]bool)
 	potentialCoordinates := getSurroundingCoordinates(king.currentCoordinate)
 	// temporarily set current king space to nil, to simulate board if king were to move
@@ -273,15 +273,15 @@ func getSurroundingCoordinates(coord Coordinate) []Coordinate {
 }
 
 // Checks whether moving given piece (specified by pieceToMoveCoord) will expose the king
-func willMoveExposeKing(kingCoord Coordinate, pieceToMoveCoord Coordinate, pieceSide Side, board *ChessBoard) bool {
+func willMoveExposeKing(kingCoord Coordinate, pieceToMoveCoord Coordinate, pieceSide Side, board *ChessBoard) (Coordinate, bool) {
 	if !areCoordinatesAligned(kingCoord, pieceToMoveCoord) {
-		return false
+		return Coordinate{}, false
 	}
 	return doesPathContainThreat(board, kingCoord, pieceToMoveCoord, pieceSide)
 }
 
 // Checks whether moving the piece at pieceToMoveCoord will create a threat to the king
-func doesPathContainThreat(board *ChessBoard, kingCoord Coordinate, pieceToMoveCoord Coordinate, pieceSide Side) bool {
+func doesPathContainThreat(board *ChessBoard, kingCoord Coordinate, pieceToMoveCoord Coordinate, pieceSide Side) (Coordinate, bool) {
 	rowChange := 0
 	if pieceToMoveCoord.Row > kingCoord.Row {
 		rowChange = 1
@@ -313,27 +313,32 @@ func doesPathContainThreat(board *ChessBoard, kingCoord Coordinate, pieceToMoveC
 			continue
 		}
 		if !pastPieceToMove {
-			return false
+			return Coordinate{}, false
 		}
 		if pastPieceToMove && board.GetPieceSide(currentCoord) == pieceSide {
-			return false
+			return Coordinate{}, false
 		}
 		currentCoordPieceType := board.GetPieceType(currentCoord)
 		if currentCoordPieceType == QUEEN || currentCoordPieceType == rookOrBishopThreat {
-			return true
+			return currentCoord, true
 		}
-		return false
+		return Coordinate{}, false
 	}
-	return false
+	return Coordinate{}, false
+}
+
+func GetThreateningCoordinates(board *ChessBoard, coords Coordinate, side Side) []Coordinate {
+	var threateningCoords []Coordinate
+	threateningCoords = append(threateningCoords, threateningStraightLineCoords(coords, board, side)...)
+	threateningCoords = append(threateningCoords, threateningDiagonalCoords(coords, board, side)...)
+	threateningCoords = append(threateningCoords, threateningKnightCoordinates(coords, board, side)...)
+	threateningCoords = append(threateningCoords, threateningPawnCoordinates(coords, board, side)...)
+	return threateningCoords
 }
 
 // Updates king's status - whether king is in check and what pieces are threatening king if it is in check
 func (king *King) updateKingStatus(board *ChessBoard) {
-	var threateningCoords []Coordinate
-	threateningCoords = append(threateningCoords, threateningStraightLineCoords(king.currentCoordinate, board, king.pieceSide)...)
-	threateningCoords = append(threateningCoords, threateningDiagonalCoords(king.currentCoordinate, board, king.pieceSide)...)
-	threateningCoords = append(threateningCoords, threateningKnightCoordinates(king.currentCoordinate, board, king.pieceSide)...)
-	threateningCoords = append(threateningCoords, threateningPawnCoordinates(king.currentCoordinate, board, king.pieceSide)...)
+	threateningCoords := GetThreateningCoordinates(board, king.GetCurrentCoordinates(), king.GetPieceSide())
 	if len(threateningCoords) == 0 {
 		king.inCheck = false
 		return
